@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TimeType>
+  <DATA_RECORD>
+    <TimeTypeId>0</TimeTypeId>
+    <TimeType></TimeType>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <TimeTypeId>1</TimeTypeId>
+    <TimeType>開幕</TimeType>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <TimeTypeId>2</TimeTypeId>
+    <TimeType>派生</TimeType>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <TimeTypeId>3</TimeTypeId>
+    <TimeType>中盤</TimeType>
+  </DATA_RECORD>
+</TimeType>
