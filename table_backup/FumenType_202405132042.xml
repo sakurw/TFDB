@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FumenType>
+  <DATA_RECORD>
+    <FumenTypeId>1</FumenTypeId>
+    <FumenType>テンプレ</FumenType>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <FumenTypeId>2</FumenTypeId>
+    <FumenType>謎テト</FumenType>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <FumenTypeId>3</FumenTypeId>
+    <FumenType>中盤</FumenType>
+  </DATA_RECORD>
+</FumenType>
