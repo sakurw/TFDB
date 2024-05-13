@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>TFDB</title>
+    <meta name="description" content="ディスクリプション" />
+    
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="タイトル" />
+    <meta property="og:image" content="images/icon.png" />
+    <meta property="og:url" content="http://example.net/" />
+    <meta property="og:site_name" content="サイト名" />
+    <meta property="og:description" content="ディスクリプション" />
+    
+    <meta name="robots" content="noarchive">
+    
+    <link rel="shortcut icon" href="images/icon.png"> <!-- アイコン仮置き -->
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+  </head>
+  <body>
+ <!-- 固定バナー -->
+ <div class="banner">
+    <a href="#" class="logo">
+      <img src="images/icon.png" alt="Logo" >
+      <p>TFDB</p>
+    </a>
+    <div class="menu-toggle"></div>
+    <ul>
+      <li><a href="#">TFDB Serch</a></li>
+      <li><a href="#">Guide</a></li>
+      <li><a href="#">What's TFDB?</a></li>
+      <li><a href="#">Credit</a></li>
+      <li><a href="#">Discord</a></li>
+    </ul>
+  </div>
+ 
+  <!-- メインコンテンツ -->
+  <main>
+    <section>
+      <h2>TFDB Serch</h2>
+      <!-- TFDB検索ページのコンテンツをここに追加 -->
+    </section>
+ 
+    <section>
+      <h2>Guide</h2>
+      <p>このセクションではTFDBの使い方について説明します。</p>
+    </section>
+ 
+    <section>
+      <h2>What's TFDB?
+      </h2>
+      <p>このセクションではTFDBの背景や目的について説明します。</p>
+    </section>
+ 
+    <section>
+      <h2>Credit</h2>
+      <p>このセクションではTFDBのクレジットを記載します。</p>
+    </section>
+ 
+    <section>
+      <h2>Discord</h2>
+      <a href="#">Discord</a>
+    </section>
+
+  </main>
+ 
+
+  <script>
+    const menuToggle = document.querySelector('.menu-toggle');
+    const banner = document.querySelector('.banner');
+ 
+    menuToggle.addEventListener('click', () => {
+      banner.classList.toggle('open');
+    });
+  </script>
+
+  </body>
+</html>
