@@ -1,4 +1,7 @@
-from py_fumen.decoder import decode
+from py_fumen.decoder import decode as fdecode
+from py_fumen.encoder import encode as fencode
+import codecs
+import chardet
 import csv
 
 #csv展開
@@ -12,12 +15,28 @@ for FumenInfor_row in FumenInfor_table:
     fumen_id=FumenInfor_row[0]
     if fumen_id=="FumenId":
         continue
-    decoded_fumen=decode(FumenInfor_row[1])
+    decoded_fumen=fdecode("v115@LhA8IeA8IeA8OeAgWjBlvs2AWxDfEToHVBlvs2AWkg?6ASoPmDzCXTAVa2EB2XHDBwvnRAVa2EB2XHDBwvnRAVau6A?1XPDCGKjRAVau6AyXPDCGqnRAVau6A0XPDCG6gRAVaW3AxX?PDCG6MBA")#FumenInfor_row[1])
     #譜面ページ分ループ（ページ数カウンターをセット）
-    page_count=1
+    page_count=0
     for decoded_page in decoded_fumen:
-        #1ページをエンコード　or 空白ページをカウント、01処理を入れる
-        test=decoded_page.get_field().string()
-        breakpoint()
-    #FumenPage配列にappendする
+        #ユニコード化されたコメントを文字列に直す
+        decoded_page.comment = codecs.decode(decoded_page.comment.replace("%u", "\\u"), "unicode_escape")
+
+        page_count=page_count+1
+        field01=""
+        #01処理を入れる　or 空白ページスキップ
+        decoded_field=decoded_page.get_field().string()
+        if len(decoded_field)==0:
+            continue
+        for char in decoded_field:
+            if char=="_":
+                field01=field01+"0"
+            elif char=="\n":
+                continue
+            else:
+                field01 = field01 + "1"
+        # FumenPage配列にappendする、中でencode
+        FumenPage_table.append([fumen_id,page_count,fencode([decoded_page]),field01])
+
+breakpoint()
     #csvファイルを作成
