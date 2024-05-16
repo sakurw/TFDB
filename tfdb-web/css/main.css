@@ -41,7 +41,7 @@ a:link, a:visited, a:hover, a:active {
   top: 0;
   left: 0;
   right: 0;
-  height: 75px;
+  height: 83px;
   background-color: #333;
   color: #fff;
   padding: 2%;
@@ -63,19 +63,34 @@ a:link, a:visited, a:hover, a:active {
 .banner .logo p {
   margin-left: 10px;
   font-size: 32px;
+  color: #fff;
 }
 .banner a {
-  color: #fff;
+  color: darkgrey;
   text-decoration: none;
   margin-left : 10px;
-  font-size: 16px;
+  font-size: 20px;
 }
 .banner ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
   display: flex;
+  justify-content: space-between;
+  width:100%;
 }
+.banner ul .group1 {
+  display: flex;
+  justify-content: left;
+  width: 45%;
+  margin-left: 5%;
+}
+.banner ul .group2 {
+  display: flex;
+  justify-content: right;
+  width: 45%;
+}
+
 .banner li {
   margin-left: 20px;
 }
