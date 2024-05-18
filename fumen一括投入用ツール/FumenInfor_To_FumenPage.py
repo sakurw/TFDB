@@ -1,9 +1,8 @@
-#py-fumenで日本語コメント付の譜面をエンコードしようとすると文字化けするため、途中でjsを使用する
 from py_fumen_py import *
 import csv
 
 #csv展開
-with open(r"C:\Users\sakur\Desktop\TFDB\test\FumenInfor_202405132123.csv") as FumenInfor:
+with open(r"path") as FumenInfor:
     FumenInfor_table=[row for row in csv.reader(FumenInfor)]
 
 #FumenPageの二次配列作成[行（1ページ1行）、列（譜面ID、ページ数、ページ単位の譜面、01処理）]
@@ -37,7 +36,7 @@ for FumenInfor_row in FumenInfor_table:
     #FumenInfor用のページ出力
     print(page_count)
     # csvファイルを作成
-with open(r"C:\Users\sakur\Desktop\TFDB\test\FumenPage.csv","w",encoding="utf-8") as FumenPage:
+with open(r"path","w",encoding="utf-8") as FumenPage:
     for row in FumenPage_table:
         FumenPage.write(str(row).translate(str.maketrans({"[":"","]":"","'":""})))
         FumenPage.write("\n")
