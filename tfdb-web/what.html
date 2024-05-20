@@ -1,29 +1,32 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>TFDB</title>
-    <meta name="description" content="ディスクリプション" />
-    
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="タイトル" />
-    <meta property="og:image" content="images/icon.png" />
-    <meta property="og:url" content="http://example.net/" />
-    <meta property="og:site_name" content="サイト名" />
-    <meta property="og:description" content="ディスクリプション" />
-    
-    <meta name="robots" content="noarchive">
-    
-    <link rel="shortcut icon" href="images/icon.png"> <!-- アイコン仮置き -->
-    <link rel="stylesheet" type="text/css" href="css/main.css">
-  </head>
-  <body>
- <!-- 固定バナー -->
- <div class="banner">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>TFDB</title>
+  <meta name="description" content="ディスクリプション" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="タイトル" />
+  <meta property="og:image" content="images/icon.png" />
+  <meta property="og:url" content="http://example.net/" />
+  <meta property="og:site_name" content="サイト名" />
+  <meta property="og:description" content="ディスクリプション" />
+
+  <meta name="robots" content="noarchive">
+
+  <link rel="shortcut icon" href="images/icon.png"> <!-- アイコン仮置き -->
+  <link rel="stylesheet" type="text/css" href="css/main.css">
+  <link rel="stylesheet" type="text/css" href="css/whats.css">
+</head>
+
+<body>
+  <!-- 固定バナー -->
+  <div class="banner">
     <a href="./index.html" class="logo">
-      <img src="images/icon.png" alt="Logo" >
+      <img src="images/icon.png" alt="Logo">
       <p>TFDB</p>
     </a>
     <div class="menu-toggle"></div>
@@ -39,21 +42,30 @@
       </div>
     </ul>
   </div>
- 
+
   <!-- メインコンテンツ -->
   <main>
-    <p>whats</p>
+    <div>
+      <p class="primary">WHAT'S TFDB？</p>
+      <p>概要</p>
+      <ol>
+        <li>なぜDB?</li>
+        <li>今、TFDBでできること</li>
+        <li>将来的にやりたいこと</li>
+      </ol>
+    </div>
   </main>
- 
+
 
   <script>
     const menuToggle = document.querySelector('.menu-toggle');
     const banner = document.querySelector('.banner');
- 
+
     menuToggle.addEventListener('click', () => {
       banner.classList.toggle('open');
     });
   </script>
 
-  </body>
+</body>
+
 </html>
