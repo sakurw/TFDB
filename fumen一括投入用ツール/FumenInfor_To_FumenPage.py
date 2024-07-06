@@ -2,7 +2,7 @@ from py_fumen_py import *
 import csv
 
 #csv展開
-with open(r"path") as FumenInfor:
+with open(r"path",encoding="utf-8") as FumenInfor:
     FumenInfor_table=[row for row in csv.reader(FumenInfor)]
 
 #FumenPageの二次配列作成[行（1ページ1行）、列（譜面ID、ページ数、ページ単位の譜面、01処理）]
@@ -38,5 +38,5 @@ for FumenInfor_row in FumenInfor_table:
     # csvファイルを作成
 with open(r"path","w",encoding="utf-8") as FumenPage:
     for row in FumenPage_table:
-        FumenPage.write(str(row).translate(str.maketrans({"[":"","]":"","'":""})))
+        FumenPage.write(str(row).translate(str.maketrans({"[":"","]":"","'":""," ":""})))
         FumenPage.write("\n")
