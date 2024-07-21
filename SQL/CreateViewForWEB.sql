@@ -7,8 +7,11 @@ select
     `fi`.`Title` AS `Title`,
     `fi`.`FumenCode` AS `FumenCode`,
     `fi`.`Comment` AS `Comment`,
+    `fi`.`FumenTypeId` AS `FumenTypeId`,
     `ft`.`FumenType` AS `FumenType`,
-    coalesce(`tt`.`TimeType`, '-') AS `COALESCE (tt.TimeType,'-')`,
+    `fi`.`TimeTypeId` AS `TimeTypeId`,
+    coalesce(`tt`.`TimeType`, '-') AS `TimeType`,
+    `fi`.`DiscordId` AS `DiscordId`,
     `u`.`DiscordName` AS `DiscordName`,
     `fi`.`RegisterTime` AS `RegisterTime`
 from
@@ -20,4 +23,4 @@ join `TimeType` `tt` on
 join `User` `u` on
     ((`fi`.`DiscordId` = `u`.`DiscordId`)))
 order by
-    `fi`.`FumenId`;
+    `fi`.`FumenId` ASC WITH CASCADED CHECK OPTION;
