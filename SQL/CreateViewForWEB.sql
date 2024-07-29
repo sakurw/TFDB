@@ -13,7 +13,9 @@ select
     coalesce(`tt`.`TimeType`, '-') AS `TimeType`,
     `fi`.`DiscordId` AS `DiscordId`,
     `u`.`DiscordName` AS `DiscordName`,
-    `fi`.`RegisterTime` AS `RegisterTime`
+    `fi`.`RegisterTime` AS `RegisterTime`,
+    `fi`.`Page` AS `Page`
+    
 from
     (((`FumenInfor` `fi`
 join `FumenType` `ft` on
@@ -23,4 +25,4 @@ join `TimeType` `tt` on
 join `User` `u` on
     ((`fi`.`DiscordId` = `u`.`DiscordId`)))
 order by
-    `fi`.`FumenId` ASC WITH CASCADED CHECK OPTION;
+    `fi`.`FumenId` WITH CASCADED CHECK OPTION;
