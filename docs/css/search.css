@@ -1,0 +1,145 @@
+.main {
+    width: auto;
+    height: 100%;
+    position: relative;
+    top: 0;
+    transition: width .5s, margin-left .5s;
+    overflow: hidden;
+    display: flex;
+    justify-content: center
+}
+
+.search-box,
+.title-bar {
+    position: absolute;
+    width: 100%
+}
+
+.group-button,
+.search-terms {
+    display: block;
+    position: relative
+}
+
+.main-with-sidebar-narrow {
+    margin-left: 50px
+}
+
+.main-with-sidebar-wide {
+    margin-left: 250px
+}
+
+.title-bar {
+    cursor: default;
+    top: 0;
+    margin-left: 6%;
+    font-size: 30px;
+    font-family: Segoe print;
+    font-weight: 700
+}
+
+.title-bar div {
+    position: relative;
+    top: -21px;
+    width: 9.5em;
+    height: 20px;
+    background-color: #a9e2ff50
+}
+
+.search-box {
+    top: 60px
+}
+
+.search-buttons {
+    position: relative;
+    top: 0;
+    margin-left: 10%
+}
+
+.search-terms {
+    width: 1000px;
+    height: 200px;
+    left: 0;
+}
+
+.term-group {
+    width: 600px;
+    position: absolute;
+    top: 30px;
+    height: auto;
+    margin: 0;
+    margin: 0 auto 0 10%;
+}
+
+.group-button {
+    width: 600px;
+    height: 40px;
+    border-top: 2px solid #000;
+    border-bottom: none;
+    border-right: none;
+    border-left: none;
+    background-color: #fff;
+    font-size: 25px;
+    line-height: 50%;
+    text-align: left;
+    cursor: pointer;
+    overflow: hidden;
+    font-family: consolas;
+}
+
+.group-button:hover {
+    background-color: #f9f9f9;
+}
+
+.group-button.active {
+    border-bottom: none;
+}
+
+.group-button-arrow {
+    content: "";
+    display: inline-block;
+    margin-left: 10px;
+    vertical-align: middle;
+    transition: transform;
+    position: absolute;
+    right: 5%;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.for-flex,
+.group-button.active .group-content {
+    display: block;
+}
+
+.for-flex {
+    width: 600px;
+}
+
+.for-flex-field {
+    border-bottom: #000 2px solid;
+}
+
+.group-content {
+    position: relative;
+    top: 50%;
+    display: none;
+    padding: 15px 0;
+    background-color: #fff;
+    margin-left: 5%;
+    display: none;
+}
+
+.group-content label {
+    margin-left: 10px;
+}
+
+
+.group-button.active .group-button-arrow {
+    transform: translateY(-60%) rotate(180deg)
+}
+
+
+.FumenId {
+    width: 4em;
+}

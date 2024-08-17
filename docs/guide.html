@@ -1,59 +1,21 @@
-<!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>TFDB</title>
-    <meta name="description" content="ディスクリプション" />
-    
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="タイトル" />
-    <meta property="og:image" content="images/icon.png" />
-    <meta property="og:url" content="http://example.net/" />
-    <meta property="og:site_name" content="サイト名" />
-    <meta property="og:description" content="ディスクリプション" />
-    
-    <meta name="robots" content="noarchive">
-    
-    <link rel="shortcut icon" href="images/icon.png"> <!-- アイコン仮置き -->
-    <link rel="stylesheet" type="text/css" href="css/main.css">
-  </head>
-  <body>
- <!-- 固定バナー -->
- <div class="banner">
-    <a href="./index.html" class="logo">
-      <img src="images/icon.png" alt="Logo" >
-      <p>TFDB</p>
-    </a>
-    <div class="menu-toggle"></div>
-    <ul>
-      <div class="group1">
-        <li><a href="./what.html">What's TFDB?</a></li>
-        <li><a href="./guide.html">Guide</a></li>
-        <li><a href="./serch.html">TFDB Serch</a></li>
-      </div>
-      <div class="group2">
-        <li><a href="./credit.html">Credit</a></li>
-        <li><a href="#">Discord</a></li>
-      </div>
-    </ul>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>TFDB</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="css/search.css">
+</head>
+
+<body>
+  <div id="sidebar_contena"></div>
+  <div id="main" class="main main-with-sidebar-wide">
+    <div class="title">TFDB's guide</div>
+
   </div>
- 
-  <!-- メインコンテンツ -->
-  <main>
-    <p>guide</p>
-  </main>
- 
+  <script type="module" src="/js/search.js"></script>
+</body>
 
-  <script>
-    const menuToggle = document.querySelector('.menu-toggle');
-    const banner = document.querySelector('.banner');
- 
-    menuToggle.addEventListener('click', () => {
-      banner.classList.toggle('open');
-    });
-  </script>
-
-  </body>
 </html>
