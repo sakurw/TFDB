@@ -10,7 +10,7 @@ from datetime import datetime
 import py_fumen_py
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "https://sakurw.github.io/TFDB/"}}, methods=["GET", "POST"]
+CORS(app, resources={r"/*": {"origins": "https://tfdb.onrender.com/"}}, methods=["GET", "POST"]
      , allow_headers=["Content-Type", "Authorization"], supports_credentials=True, max_age=1800, send_wildcard=False,
      vary_header=True)
 api = Api(app)
