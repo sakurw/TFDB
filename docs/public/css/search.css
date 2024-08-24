@@ -1,0 +1,363 @@
+th {
+    font-weight: 400;
+    text-align: center
+}
+
+.main {
+    width: auto;
+    height: 100%;
+    position: relative;
+    top: 0;
+    transition: width .5s, margin-left .5s
+}
+
+.title-bar {
+    position: absolute;
+    width: 100%
+}
+
+.search-box {
+    width: 800px;
+}
+
+.search-box>div:last-child {
+    display: flex;
+    justify-content: center;
+}
+
+.group-button,
+.search-terms {
+    display: block;
+    position: relative
+}
+
+.main-with-sidebar-narrow {
+    margin-left: 50px
+}
+
+.main-with-sidebar-wide {
+    margin-left: 250px
+}
+
+.title-bar {
+    cursor: default;
+    top: 0;
+    margin-left: 6%;
+    font-size: 30px;
+    font-family: Segoe print;
+    font-weight: 700
+}
+
+.title-bar div {
+    position: relative;
+    top: -21px;
+    width: 9.5em;
+    height: 20px;
+    background-color: #a9e2ff50
+}
+
+.search-box {
+    position: relative;
+    top: 60px;
+    font-family: consolas
+}
+
+.search-terms {
+    width: 100%;
+    left: 0
+}
+
+.term-group {
+    width: 100%;
+    position: relative;
+    top: 30px;
+    height: auto;
+    margin: 0 auto 0 10%
+}
+
+.term-group>div:last-child {
+    width: 600px;
+    border-bottom: #000 2px solid;
+}
+
+.group-button {
+    width: 600px;
+    height: 40px;
+    border-top: 2px solid #000;
+    border-right: none;
+    border-left: none;
+    background-color: #fff;
+    font-size: 25px;
+    line-height: 50%;
+    text-align: left;
+    cursor: pointer;
+    overflow: hidden;
+    font-family: consolas
+}
+
+.group-button:hover {
+    background-color: #f9f9f9
+}
+
+.group-button,
+.group-button.active {
+    border-bottom: none
+}
+
+.group-button-arrow {
+    content: "";
+    display: inline-block;
+    margin-left: 10px;
+    vertical-align: middle;
+    transition: transform;
+    position: absolute;
+    right: 5%;
+    top: 50%;
+    transform: translateY(-50%)
+}
+
+.group-button.active .group-content {
+    display: block
+}
+
+.group-content {
+    width: 580px;
+    font-family: Yu Gothic UI Semibold
+}
+
+.group-content {
+    padding-bottom: 15px;
+    background-color: #fff;
+    margin-left: 10px;
+    display: none;
+}
+
+.group-content>div {
+    margin-top: 10px
+}
+
+.group-button.active .group-button-arrow {
+    transform: translateY(-60%) rotate(180deg)
+}
+
+.group-button.active+.group-content {
+    max-height: 1020px;
+}
+
+.box {
+    height: 25px
+}
+
+.FumenId {
+    width: 4em
+}
+
+.Title {
+    width: 20em
+}
+
+.title-container {
+    display: flex
+}
+
+.toggle-container,
+.toggle-labels {
+    display: flex;
+    width: 200px;
+    align-items: center
+}
+
+.toggle-container {
+    margin-left: -30px;
+    margin-top: 0
+}
+
+.field-toggles .toggle-container {
+    flex-direction: column;
+    margin-top: 20px
+}
+
+.toggle-labels {
+    justify-content: space-between;
+    margin-left: 25px
+}
+
+.toggle-labels:nth-of-type(2) {
+    display: flex;
+    width: 225px;
+    align-items: center;
+    justify-content: space-between;
+    margin-left: 25px
+}
+
+.toggle-label {
+    flex: 1;
+    align-items: center;
+    justify-content: right;
+    margin-top: 0 !important;
+    margin-left: 10px;
+    display: flex;
+    width: fit-content
+}
+
+.toggle-switch {
+    position: relative;
+    width: 50px;
+    height: 25px;
+    border: 2px solid #000;
+    cursor: pointer;
+    margin-left: 10px;
+    box-sizing: border-box
+}
+
+.toggle-switch.active .toggle-button {
+    left: 50%
+}
+
+.toggle-button {
+    left: 0;
+    width: calc(50% - 4px);
+    height: calc(100% - 4px);
+    background-color: #000;
+    position: absolute;
+    border: 2px solid #fff;
+    transition: left .15s ease
+}
+
+.discordid {
+    width: 20em
+}
+
+.action-button {
+    margin-left: 10px;
+    background: #fff;
+    border: #000 1px solid;
+    height: 27px;
+    cursor: pointer
+}
+
+.action-button:hover {
+    background-color: #f9f9f9
+}
+
+.action-button:active {
+    background: #000000;
+    color: #ffffff;
+}
+
+.action-button:nth-of-type(2) {
+    height: 30px
+}
+
+.range-from {
+    margin-right: 10px
+}
+
+.range-to {
+    margin-left: 10px
+}
+
+.register-date {
+    width: 8em
+}
+
+.page {
+    width: 4em
+}
+
+.type {
+    width: 11em
+}
+
+.field-inputs {
+    flex-direction: column;
+    align-items: center
+}
+
+.field-inputs table {
+    margin-bottom: 10px
+}
+
+.Field canvas {
+    position: relative;
+    right: 0
+}
+
+.field-container {
+    display: flex;
+    align-items: start;
+    justify-content: space-between
+}
+
+.field-toggles {
+    display: flex;
+    align-items: center;
+    flex-direction: column
+}
+
+.search-buttons {
+    margin-top: 50px;
+}
+
+.search-buttons>button {
+    height: 30px;
+    width: 80px;
+}
+
+.pop-background {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    background-color: #00000046;
+    border: #000 2px solid;
+    top: 0;
+    left: 0;
+
+}
+
+.pop-content {
+    background-color: #ffffff;
+    margin: 50px auto;
+    padding: 10px;
+    border: #b8b8b8 1px solid;
+    border-radius: 20px;
+    width: 600px;
+    height: 450px;
+}
+
+.pop-content>div:last-child {
+    width: 100%;
+    height: 60px;
+    display: flex;
+    align-items: center;
+}
+
+.user-title {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.pop-close {
+    float: right;
+    margin-right: 10px;
+    font-size: 35px;
+    color: #0000004a;
+    font-weight: bold;
+}
+
+.users-container {
+    border: #000 1px solid;
+    width: 580px;
+    height: 330px;
+    margin: 30px auto;
+    margin-bottom: 0;
+    overflow-y: scroll;
+}
+
+.user-input-button {
+    width: 90%;
+    margin: 30px auto;
+    border-radius: 20px;
+}
