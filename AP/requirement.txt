@@ -1,0 +1,16 @@
+aniso8601==9.0.1
+blinker==1.8.2
+click==8.1.7
+Flask==3.0.3
+Flask-Cors==4.0.1
+Flask-RESTful==0.3.10
+gunicorn==22.0.0
+itsdangerous==2.2.0
+Jinja2==3.1.4
+MarkupSafe==2.1.5
+mysql-connector-python==9.0.0
+packaging==24.1
+py_fumen_py==0.0.11
+pytz==2024.1
+six==1.16.0
+Werkzeug==3.0.3
