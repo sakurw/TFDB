@@ -1,0 +1,191 @@
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TFDB</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link rel="stylesheet" href="css/search.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/7.3.2/pixi.min.js"></script>
+</head>
+
+<body>
+  <div id="main" class="main main-with-sidebar-wide">
+    <div class="title-bar">Search from TFDB<div></div>
+    </div>
+    <div class="search-box">
+      <div class="search-terms">
+        <div class="term-group">
+          <button class="group-button">
+            Identification Info<span class="group-button-arrow"><i class="fas fa-angle-down"></i></span>
+          </button>
+          <div class="group-content">
+            <div>Fumen ID<i class="fa fa-info-circle info-circle"></i>：<input type="number" id="FumenId"
+                class="FumenId box" /><span class="hover-text">Fumen ID is
+                unique key of the data<br>Ignore other search option, use this.</span></div>
+            <div class="title-container">
+              <div>Title<i class="fa fa-info-circle info-circle"></i>：<input type="text" id="Title"
+                  class="Title box" /><span class="hover-text">Fumen title is input
+                  this<br>Toggle button to change match pattern.</span></div>
+              <div class="toggle-container">
+                <div class="toggle-labels">
+                  <div class="toggle-label">exact</div>
+                  <div class="toggle-switch" id="TitleToggleSwitch">
+                    <div class="toggle-button"></div>
+                  </div>
+                  <div class="toggle-label">contain</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button class="group-button">
+            Metadata<span class="group-button-arrow"><i class="fas fa-angle-down"></i></span>
+          </button>
+          <div class="group-content">
+            <div>
+              Discord UID<i class="fa fa-info-circle info-circle"></i>：<input type="number" id="DiscordId"
+                class="box discordid" /><span class="hover-text">Search by who added the data<br>Click on the right
+                button.<br>to select from the list of users.</span>
+              <button title="RefferToUserTable" id="userTableButton" class="action-button"><i
+                  class="fas fa-table"></i></button>
+            </div>
+            <div>
+              Register date<i class="fa fa-info-circle info-circle"></i>：<input type="date" id="RegisterTimeFrom"
+                class="box range-from register-date" max="9999-12-31" /> ~
+              <input type="date" id="RegisterTimeTo" class="box range-to register-date" max="9999-12-31" /><span
+                class="hover-text">Search by date the data was added.</span>
+            </div>
+            <div>Page<i class="fa fa-info-circle info-circle"></i>：<input type="number" id="PageFrom"
+                class="box range-from page" /> ~
+              <input type="number" id="PageTo" class="box range-to page" /><span class="hover-text">Search by Fumen page
+                count.</span>
+            </div>
+          </div>
+
+          <button class="group-button">
+            Type Classification<span class="group-button-arrow"><i class="fas fa-angle-down"></i></span>
+          </button>
+          <div class="group-content">
+            <div>Fumen Type<i class="fa fa-info-circle info-circle"></i>：
+              <select id="FumenType" class="box type">
+                <option value="0"></option>
+                <option value="1">Template</option>
+                <option value="2">Quiz</option>
+                <option value="3">Knowledge</option>
+              </select>
+              <span class="hover-text">Search by Fumen type.</span>
+            </div>
+            <div>Timing Type<i class="fa fa-info-circle info-circle"></i>：
+              <select id="TimeType" class="box type">
+                <option value="0"></option>
+                <option value="1">Opener</option>
+                <option value="2">Following Opener</option>
+                <option value="3">Mid</option>
+              </select>
+              <span class="hover-text">Search by expected timing of use of Fumen.</span>
+            </div>
+          </div>
+
+          <button class="group-button">
+            Field<span class="group-button-arrow"><i class="fas fa-angle-down"></i></span>
+          </button>
+          <div class="group-content">
+            <div class="field-container">
+              <div class="field-inputs">
+                <table>
+                  <tr>
+                    <th></th>
+                    <th>Height</th>
+                    <th>Width</th>
+                  </tr>
+                  <tr>
+                    <th>Field size<i class="fa fa-info-circle info-circle"></i>：<span class="hover-text">Search by
+                        Field.<br>Input Height and Width to generate the board.<br>Selecting "Mirror" in the first
+                        toggle
+                        button will<br>include reversed fields in your search.<br>The second toggle button changes the
+                        match
+                        pattern.<br>(Exact match is available only for a Width:10)</span></th>
+                    <th><input type="number" id="FieldHeight" class="box" min="2" max="24" placeholder="2~24" /></th>
+                    <th><input type="number" id="FieldWidth" class="box" min="2" max="10" placeholder="2~10" /></th>
+                  </tr>
+                </table>
+                <div class="field-buttons">
+                  <button class="action-button" id="FieldReset">Reset Field</button>
+                  <button class="action-button" id="FieldErase">Erase Field</button>
+                </div>
+                <div class="field-toggles">
+                  <div class="toggle-container">
+                    <div class="toggle-labels">
+                      <div class="toggle-label mirror">mirror</div>
+                      <div class="toggle-switch" id="MirrorToggleSwitch">
+                        <div class="toggle-button"></div>
+                      </div>
+                      <div class="toggle-label non-mirror">non-mirror</div>
+                    </div>
+                  </div>
+                  <div class="toggle-container">
+                    <div class="toggle-labels">
+                      <div class="toggle-label">exact</div>
+                      <div class="toggle-switch field-match-toggle" id="FieldToggleSwitch">
+                        <div class="toggle-button field-toggle" id="toggleButton"></div>
+                      </div>
+                      <div class="toggle-switch exact-only" id="exactOnly"></div>
+                      <div class="toggle-label">contain</div>
+                    </div>
+                    <span class="exact-only-text" id="exactOnlyText">*This option can use only "Width:10"*</span>
+                  </div>
+                </div>
+              </div>
+              <div id="Field" class="Field"></div>
+            </div>
+          </div>
+          <div></div>
+        </div>
+      </div>
+
+      <div class="search-buttons">
+        <button id="search" class="action-button">SEARCH</button>
+        <button id="clear" class="action-button">CLEAR</button>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar_contena" class="sidebar-contena"></div>
+  <script type="module" src="./js/search.js"></script>
+
+
+  <!--users用pop-->
+  <div id="popWindow" class="pop-background">
+    <div class="pop-content">
+      <span class="user-title">USER SELECT</span>
+      <span id="popClose" class="pop-close">&times;</span>
+      <div class="users-container">
+        <table class="user-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Discord ID</th>
+              <th>Discord name</th>
+            </tr>
+          </thead>
+          <tbody id="userTableBody"></tbody>
+        </table>
+      </div>
+      <div>
+        <button id="userSelect" class="action-button user-input-button">INPUT</button>
+      </div>
+    </div>
+  </div>
+
+  <!--呼び出し中画面-->
+  <div class="loading-window" id="loadingWindow">
+    <div class="loading-t" id="loadingT">
+      <div class="block"></div>
+      <div class="block"></div>
+      <div class="block"></div>
+      <div class="block"></div>
+    </div>
+  </div>
+</body>
+
+</html>
