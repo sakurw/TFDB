@@ -1,7 +1,7 @@
 import { sidebarjs } from "../sidebar/sidebar.js";
 
 /*
-各パラメータ取得
+各パラメータ取得(APIの形式に対応したreturnを設定)
 CLEARボタン
 SEARCHボタン
  */
@@ -39,9 +39,11 @@ function drawGrid(height, width) {
         grid_graphic.moveTo(0, (height - 20) * mino_scale);
         grid_graphic.lineTo(width * mino_scale, (height - 20) * mino_scale);
     }
-    grid_graphic.moveTo(0, (height - 1) * mino_scale);
-    grid_graphic.lineTo(width * mino_scale, (height - 1) * mino_scale);
-    grid_graphic.lineStyle();
+    if (width == 10) {
+        grid_graphic.moveTo(0, (height - 1) * mino_scale);
+        grid_graphic.lineTo(width * mino_scale, (height - 1) * mino_scale);
+        grid_graphic.lineStyle();
+    }
     field.stage.addChild(grid_graphic);
 }
 
@@ -152,6 +154,9 @@ function fieldreset() {
     fieldHeightInput.value = ""
     fieldWidthInput.value = ""
     drawNull();
+    FieldToggleSwitch.style.display = "block"
+    exactOnly.style.display = "none"
+    exactOnlyText.style.display = "none"
 }
 
 //FieldErase
@@ -222,6 +227,50 @@ function userinput() {
     popWindow.style.display = "none";
 }
 
+
+function getparams() {
+    const fumenID = isNaN(parseInt(document.getElementById("FumenId").value)) ? 0 : parseInt(document.getElementById("FumenId").value);
+    const title = /^\s*$/.test(document.getElementById("Title").value) ? 0 : document.getElementById("Title").value;
+    let titleOption = document.getElementById('TitleToggleSwitch').classList.contains("active") ? 1 : 0;
+
+    const discordId = isNaN(parseInt(document.getElementById("DiscordId").value)) ? 0 : parseInt(document.getElementById("DiscordId").value);
+    const registerDateFrom = document.getElementById("RegisterTimeFrom").value ? document.getElementById("RegisterTimeFrom").value.toString() : 0;
+    const registerDateTo = document.getElementById("RegisterTimeTo").value ? document.getElementById("RegisterTimeTo").value.toString() : 0;
+    const pageFrom = isNaN(parseInt(document.getElementById("PageFrom").value)) ? 0 : parseInt(document.getElementById("PageFrom").value);
+    const pageTo = isNaN(parseInt(document.getElementById("PageTo").value)) ? 0 : parseInt(document.getElementById("PageTo").value);
+
+    const fumenType = document.getElementById("FumenType").value
+    const timeType = document.getElementById("TimeType").value
+
+    let fumen01Width = isNaN(parseInt(document.getElementById("FieldWidth").value)) ? 0 : parseInt(document.getElementById("FieldWidth").value);
+    let fumen01Mirror = document.getElementById('MirrorToggleSwitch').classList.contains("active") ? 0 : 1;
+    let fumen01Option = document.getElementById('FieldToggleSwitch').classList.contains("active") ? 1 : 0;
+    let fumen01 = ""
+    let all0Flag = true;
+    blocks.forEach(function (block) {
+        if (block.tint == 0) {
+            fumen01 += 0;
+        }
+        else {
+            fumen01 += 1
+            all0Flag = false
+        }
+    });
+    if (all0Flag) {
+        let fumen01 = 0
+    }
+
+    if (title == 0) {
+        titleOption = 0
+    }
+    if (fumen01 == 0) {
+        fumen01Width = 0
+        fumen01Mirror = 0
+        fumen01Option = 0
+    }
+
+}
+
 //読み込み後呼び出し
 document.addEventListener('DOMContentLoaded', function () {
     fetch('../public/sidebar/sidebar.html')
@@ -261,6 +310,24 @@ document.addEventListener('DOMContentLoaded', function () {
     //FieldErase
     const fieldErase = document.getElementById("FieldErase")
     fieldErase.addEventListener("click", fielderase)
+
+    //Clearbutton
+    const clearButton = document.getElementById("clear")
+    clearButton.addEventListener("click", function () {
+        //input
+        document.querySelectorAll("input").forEach(input => {
+            input.value = "";
+        })
+        //select
+        document.querySelectorAll("select").forEach(select => {
+            select.selectedIndex = 0;
+        })
+        //toggle
+        document.querySelectorAll(".toggle-switch").forEach(toggle => {
+            toggle.classList.remove("active")
+        })
+        fieldreset();
+    })
 
     //各アコーディオン切り替え
     document.querySelectorAll(".group-button").forEach(

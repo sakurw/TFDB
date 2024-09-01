@@ -331,6 +331,10 @@ th {
     width: 11em
 }
 
+.Field {
+    width: 222px;
+}
+
 .Field canvas {
     border: #000 1px solid;
     position: relative;
