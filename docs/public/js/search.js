@@ -1,9 +1,17 @@
 import { sidebarjs } from "../sidebar/sidebar.js";
+import * as tetrisFumen from '../../node_modules/tetris-fumen/index.js'
 
+// デフォルトエクスポートとして tetrisFumen をエクスポート
+export default tetrisFumen;
+
+// 使用例
+const fumenData = 'v115@vhAAgH';
+const pages = tetrisFumen.decoder.decode(fumenData);
+console.log(pages);
 /*
-各パラメータ取得(APIの形式に対応したreturnを設定)
-CLEARボタン
-SEARCHボタン
+npm
+Detail
+apiを変える
  */
 
 
@@ -227,7 +235,7 @@ function userinput() {
     popWindow.style.display = "none";
 }
 
-
+//各パラメータ取得
 function getparams() {
     const fumenID = isNaN(parseInt(document.getElementById("FumenId").value)) ? 0 : parseInt(document.getElementById("FumenId").value);
     const title = /^\s*$/.test(document.getElementById("Title").value) ? 0 : document.getElementById("Title").value;
@@ -239,11 +247,11 @@ function getparams() {
     const pageFrom = isNaN(parseInt(document.getElementById("PageFrom").value)) ? 0 : parseInt(document.getElementById("PageFrom").value);
     const pageTo = isNaN(parseInt(document.getElementById("PageTo").value)) ? 0 : parseInt(document.getElementById("PageTo").value);
 
-    const fumenType = document.getElementById("FumenType").value
-    const timeType = document.getElementById("TimeType").value
+    const fumenType = parseInt(document.getElementById("FumenType").value)
+    const timeType = parseInt(document.getElementById("TimeType").value)
 
     let fumen01Width = isNaN(parseInt(document.getElementById("FieldWidth").value)) ? 0 : parseInt(document.getElementById("FieldWidth").value);
-    let fumen01Mirror = document.getElementById('MirrorToggleSwitch').classList.contains("active") ? 0 : 1;
+    let fumen01Mirror = document.getElementById('MirrorToggleSwitch').classList.contains("active") ? 1 : 0;
     let fumen01Option = document.getElementById('FieldToggleSwitch').classList.contains("active") ? 1 : 0;
     let fumen01 = ""
     let all0Flag = true;
@@ -257,18 +265,130 @@ function getparams() {
         }
     });
     if (all0Flag) {
-        let fumen01 = 0
+        fumen01 = 0
     }
 
     if (title == 0) {
         titleOption = 0
     }
     if (fumen01 == 0) {
+        fumen01 = 0
         fumen01Width = 0
         fumen01Mirror = 0
         fumen01Option = 0
     }
+    let errorText = ""
+    const fromDate = new Date(registerDateFrom);
+    const toDate = new Date(registerDateTo)
+    if (fromDate > toDate || pageFrom > pageTo) {
+        errorText += '"Register date" or "Page" is invalid parameter(s)\n'
+    }
+    if (errorText == 0) {
+        return [fumenID, title, titleOption, discordId, registerDateFrom, registerDateTo, pageFrom, pageTo, fumenType, timeType, fumen01, fumen01Option, fumen01Mirror, fumen01Width]
+    }
+    else {
+        return [-1, errorText]
+    }
 
+}
+//検索処理
+async function search() {
+    let response
+    const bodyLabel = ["FumenID", 'Title', 'TitleOption', 'DiscordId', 'RegisterTimeFrom', 'RegisterTimeTo', 'PageFrom', 'PageTo', 'FumenTypeId', 'TimeTypeId', 'Fumen01', 'Fumen01Option', 'Fumen01Mirror', 'Fumen01Width']
+    const params = getparams();
+
+    const popWindow = document.getElementById("popWindow")
+    const loadingWindow = document.getElementById("loadingWindow")
+
+    if (params[0] == -1) {
+        alert(params[1])
+        return
+    }
+
+    popWindow.style.display = "block";
+    loadingWindow.style.display = "block";
+    try {
+        if (params[0] == 0) {
+            let bodyParam = {}
+            for (let paramIndex = 1; paramIndex < params.length; paramIndex++) {
+                bodyParam[bodyLabel[paramIndex]] = params[paramIndex]
+            }
+            response = await fetch("http://localhost:5500/api/search", { method: "POST", headers: { 'Content-Type': "application/json" }, body: JSON.stringify(bodyParam) });
+        }
+        else {
+            response = await fetch("http://localhost:5500/api/searchid", { method: "POST", headers: { 'Content-Type': "application/json" }, body: JSON.stringify({ "FumenId": params[0] }) });
+        }
+        const status = response['status']
+        const data = await response.json();
+        console.log(data)
+        console.log(status)
+        if (status == 200) {
+            const resultCount = document.getElementById("resultCount")
+            const table = document.getElementById("resultBody")
+            resultCount.innerHTML = '';
+            table.innerHTML = '';
+
+            resultCount.appendChild(document.createTextNode("Result count:" + String(data["data"].length)))
+
+            data["data"].forEach((fumen_row, index) => {
+                const row = document.createElement("tr");
+                const titleCell = document.createElement("td");
+                titleCell.textContent = String(fumen_row[1])
+                row.appendChild(titleCell);
+                const fumenCell = document.createElement("td");
+                const fumenLink = document.createElement("a")
+                fumenLink.href = "https://knewjade.github.io/fumen-for-mobile/#?d=" + String(fumen_row[2])
+                fumenLink.target = "_blank"
+                fumenLink.appendChild(document.createTextNode("Link"))
+                fumenCell.appendChild(fumenLink)
+                row.appendChild(fumenCell);
+                const typeCell = document.createElement("td");
+                typeCell.textContent = String(fumen_row[4])
+                row.appendChild(typeCell);
+                const timingCell = document.createElement("td");
+                timingCell.textContent = String(fumen_row[5])
+                row.appendChild(timingCell);
+                const detailCell = document.createElement("td")
+                const detailButton = document.createElement("button")
+                const detailIcon = document.createElement("i")
+                detailIcon.classList.add("fas")
+                detailIcon.classList.add("fa-file-alt")
+                detailButton.appendChild(detailIcon)
+                detailButton.classList.add("action-button")
+                detailButton.classList.add("result-button")
+                detailButton.id = index
+                detailCell.appendChild(detailButton)
+                row.appendChild(detailCell);
+                table.appendChild(row);
+            })
+        }
+        else {
+            console.log(String(status) + "：" + data["message"] + "\n開発者に以下の情報を添付して連絡してください\n・このコンソール画面\n・入力したパラメータ全て\n・直前に行った行動")
+        }
+    }
+    catch (error) {
+        console.log(error);
+    }
+    popWindow.style.display = "none";
+    loadingWindow.style.display = "none";
+}
+
+//mainのwidthによってstyle変更
+function changestyle() {
+    const main = document.getElementById("main")
+    const result = document.getElementById("result")
+    if (main.offsetWidth >= 1200) {
+        main.style.flexDirection = "row"
+        result.style.flexGrow = "0"
+        result.style.marginLeft = "0"
+        result.style.marginTop = "20px"
+    }
+    else {
+        main.style.flexDirection = "column"
+        result.style.flexGrow = "1"
+        result.style.marginLeft = "80px"
+        result.style.marginTop = "70px"
+    }
 }
 
 //読み込み後呼び出し
@@ -329,6 +449,10 @@ document.addEventListener('DOMContentLoaded', function () {
         fieldreset();
     })
 
+    //searchbutton
+    const searchButton = document.getElementById("search");
+    searchButton.addEventListener("click", search)
+
     //各アコーディオン切り替え
     document.querySelectorAll(".group-button").forEach(
         button => {
@@ -358,6 +482,10 @@ document.addEventListener('DOMContentLoaded', function () {
         FieldToggleSwitch.classList.toggle("active");
 
     });
+
+    //resize時にmainの並び変更
+    window.addEventListener('resize', changestyle);
+    changestyle();
 
 });
 
