@@ -7,7 +7,7 @@ const cors = require('cors');
 const port = process.env.PORT || 5500;
 
 app.use(cors({
-    origin: 'http://127.0.0.1:5500',
+    origin: 'http://127.0.0.1:5501',
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
@@ -25,7 +25,6 @@ app.use((req, res, next) => {
 
 app.get('/api/users', async (req, res) => {
     try {
-        console.log('Received request to /api/users');
         const apiKey = process.env.API_KEY;
         const apiUrl = 'https://tfdbapi.com/users';
 

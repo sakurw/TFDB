@@ -532,7 +532,7 @@ th {
 }
 
 .pop-background {
-    display: block;
+    display: none;
     position: fixed;
     z-index: 1;
     width: 100%;
@@ -723,7 +723,7 @@ th {
     border-radius: 20px;
     width: 600px;
     height: 800px;
-    display: block;
+    display: none;
 }
 
 .detail-title-container {
@@ -757,7 +757,7 @@ th {
 .detail-comment {
     margin: 10px 0 auto;
     width: 100%;
-    height: 200px;
+    height: 150px;
     overflow-y: scroll;
     border-bottom: #5b5b5b42 1px solid;
 }
@@ -783,5 +783,5 @@ th {
     bottom: 0;
     margin: 0 auto;
     border: #000 1px solid;
-    height: 100px;
+    width: 170px;
 }

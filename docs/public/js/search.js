@@ -1,35 +1,18 @@
 import { sidebarjs } from "../sidebar/sidebar.js";
-import * as tetrisFumen from '../../node_modules/tetris-fumen/index.js'
-
-// デフォルトエクスポートとして tetrisFumen をエクスポート
-export default tetrisFumen;
-
-// 使用例
-const fumenData = 'v115@vhAAgH';
-const pages = tetrisFumen.decoder.decode(fumenData);
-console.log(pages);
+import * as fumen from 'https://esm.run/tetris-fumen';
 /*
-npm
 Detail
 apiを変える
  */
 
+//検索結果格納用
+let results = [];
+let detailButton;
 
-//Field Stage生成
-const mino_scale = 22
-const field = new PIXI.Application({
-    width: 10 * mino_scale,
-    height: 24 * mino_scale,
-    backgroundColor: 0xffffff,
-    resolution: 1,
-    autoDensity: true
-});
-field.stage.interactive = true;
-field.stage.on('pointerup', onDragEnd);
-field.stage.on('pointerupoutside', onDragEnd);
+
 
 //罫線配置
-function drawGrid(height, width) {
+function drawGrid(field, mino_scale, height, width) {
     const grid_graphic = new PIXI.Graphics();
     grid_graphic.lineStyle(2, 0x4d4d4d, .6);
 
@@ -78,7 +61,7 @@ function onDragEnd() {
 }
 
 //ブロック配置
-function drawBlock(height, width) {
+function drawBlock(field, mino_scale, height, width) {
     for (let y = 0; y < height; y++) {
         for (let x = 0; x < width; x++) {
             const block_graphics = new PIXI.Graphics();
@@ -102,7 +85,7 @@ function drawBlock(height, width) {
     }
 }
 //盤面をNull化
-function drawNull() {
+function drawNull(field) {
     blocks = []
     field.stage.removeChildren();
     field.renderer.resize(220, 175)
@@ -119,7 +102,7 @@ function drawNull() {
 }
 
 //盤面生成
-function generatefield() {
+function generatefield(field, mino_scale) {
     const fieldWidthInput = document.getElementById("FieldWidth")
     const fieldHeightInput = document.getElementById("FieldHeight")
     const FieldToggleSwitch = document.getElementById("FieldToggleSwitch")
@@ -145,33 +128,33 @@ function generatefield() {
 
     if (!isNaN(width) && !isNaN(height) && width >= 2 && width <= 10 && height >= 2 && height <= 24) {
         field.renderer.resize(width * mino_scale, height * mino_scale);
-        drawBlock(height, width);
-        drawGrid(height, width);
+        drawBlock(field, mino_scale, height, width);
+        drawGrid(field, mino_scale, height, width);
     }
     else {
-        drawNull();
+        drawNull(field);
     }
 }
 
 //FieldReset
-function fieldreset() {
+function fieldreset(field) {
     const fieldWidthInput = document.getElementById("FieldWidth")
     const fieldHeightInput = document.getElementById("FieldHeight")
     blocks = []
     field.stage.removeChildren();
     fieldHeightInput.value = ""
     fieldWidthInput.value = ""
-    drawNull();
+    drawNull(field);
     FieldToggleSwitch.style.display = "block"
     exactOnly.style.display = "none"
     exactOnlyText.style.display = "none"
 }
 
 //FieldErase
-function fielderase() {
+function fielderase(field, mino_scale) {
     blocks = []
     field.stage.removeChildren();
-    generatefield();
+    generatefield(field, mino_scale);
 }
 
 
@@ -323,6 +306,9 @@ async function search() {
         console.log(data)
         console.log(status)
         if (status == 200) {
+            results = data["data"]
+            console.log(results)
+
             const resultCount = document.getElementById("resultCount")
             const table = document.getElementById("resultBody")
             resultCount.innerHTML = '';
@@ -371,6 +357,174 @@ async function search() {
     }
     popWindow.style.display = "none";
     loadingWindow.style.display = "none";
+
+    detailButton = document.querySelectorAll('.result-button')
+    detailButton.forEach(button => {
+        button.addEventListener('click', function () { calldetail(button.id) });
+    });
+}
+
+//detail関係
+const piecepattern = {
+    "T": {
+        "spawn": [-1, 0, 10, 1],
+        "left": [-1, 0, 10, -10],
+        "right": [0, 10, -10, 1],
+        "reverse": [0, -1, -10, 1]
+    },
+    "I": {
+        "spawn": [-1, 0, 1, 2],
+        "left": [-10, 0, 10, 20],
+        "right": [10, 0, -10, -20],
+        "reverse": [-2, -1, 0, 1]
+    },
+    "O": {
+        "spawn": [0, 10, 1, 11],
+        "left": [-1, 0, 9, 10],
+        "right": [0, -10, -1, -11],
+        "reverse": [-11, -1, -10, 0]
+    },
+    "S": {
+        "spawn": [-1, 0, 10, 11],
+        "left": [-1, 9, 0, -10],
+        "right": [0, 10, 1, -9],
+        "reverse": [-11, -10, 0, 1]
+    },
+    "Z": {
+        "spawn": [0, 1, 10, 9],
+        "left": [0, 10, -1, -11],
+        "right": [0, -10, 1, 11],
+        "reverse": [-1, 0, -10, -9]
+    },
+    "L": {
+        "spawn": [0, -1, 1, 11],
+        "left": [0, 9, 10, -10],
+        "right": [10, 0, -10, -9],
+        "reverse": [-1, -11, 0, 1]
+    },
+    "J": {
+        "spawn": [0, 1, -1, 9],
+        "left": [0, -11, 10, -10],
+        "right": [10, 0, -10, 11],
+        "reverse": [1, -9, 0, -1]
+    }
+}
+
+function drawFumen(field, page) {
+    function selectcolor(colorNum) {
+        switch (colorNum) {
+            case 1:
+                return 0x00fafa
+            case 2:
+                return 0xe89b02
+            case 3:
+                return 0xf7f70a
+            case 4:
+                return 0xf00202
+            case 5:
+                return 0xf002f0
+            case 6:
+                return 0x0000ff
+            case 7:
+                return 0x02d902
+            case 8:
+                return 0x999999
+            default:
+                return 0x000000
+        }
+    }
+    //piece使用箇所の塗りつぶし
+    if (page["operation"] !== undefined) {
+        let typeNum;
+        let center;
+        let gap;
+        switch (page["operation"]["type"]) {
+            case "T":
+                typeNum = 5
+                break
+            case "I":
+                typeNum = 1
+                break
+            case "O":
+                typeNum = 3
+                break
+            case "S":
+                typeNum = 7
+                break
+            case "Z":
+                typeNum = 4
+                break
+            case "L":
+                typeNum = 2
+                break
+            case "J":
+                typeNum = 6
+        }
+        center = page["operation"]["x"] + page["operation"]["y"] * 10
+        for (let piece = 0; piece < 4; piece++) {
+            console.log(piecepattern[page["operation"]["type"]][page["operation"]["rotation"]])
+            gap = piecepattern[page["operation"]["type"]][page["operation"]["rotation"]][piece]
+            page["_field"]["field"]["pieces"][center + gap] = typeNum
+        }
+    }
+    //フィールドに配置
+    for (let y = 22; y >= 0; y--) {
+        for (let x = 0; x < 10; x++) {
+            const block_graphics = new PIXI.Graphics();
+            block_graphics.beginFill(selectcolor(page["_field"]["field"]["pieces"][x + 10 * (22 - y)]));
+            block_graphics.drawRect(0, 0, 17, 17);
+            block_graphics.endFill();
+            block_graphics.x = x * 17;
+            block_graphics.y = y * 17
+            field.stage.addChild(block_graphics)
+        }
+    }
+    for (let x = 0; x < 10; x++) {
+        const block_graphics = new PIXI.Graphics();
+        block_graphics.beginFill(selectcolor(page["_field"]["garbage"]["pieces"][x]));
+        block_graphics.drawRect(0, 0, 17, 17);
+        block_graphics.endFill();
+        block_graphics.x = x * 17;
+        block_graphics.y = 391
+        field.stage.addChild(block_graphics)
+    }
+    drawGrid(field, 17, 24, 10);
+}
+
+function calldetail(index) {
+    const popWindow = document.getElementById("popWindow")
+    const detailWindow = document.getElementById("detailWindow")
+    const detailIdTitle = document.getElementById("detailIdTitle")
+    const detailAuthor = document.getElementById("detailAuthor")
+    const detailRegisterDate = document.getElementById("detailRegisterDate")
+    const detailFumenType = document.getElementById("detailFumenType")
+    const detailTiming = document.getElementById("detailTiming")
+    const detailComment = document.getElementById("detailComment")
+    const detailField = document.getElementById("detailField")
+    popWindow.style.display = "block";
+
+    detailIdTitle.textContent = results[index][0] + "：" + results[index][1]
+    detailAuthor.textContent = "：" + results[index][6]
+    detailRegisterDate.textContent = "：" + results[index][7].slice(0, 9)
+    detailFumenType.textContent = "：" + results[index][4]
+    detailTiming.textContent = "：" + results[index][5]
+    detailComment.textContent = results[index][3] == 0 ? "-" : results[index][3]
+
+    const fumenField = new PIXI.Application({
+        width: 10 * 17,
+        height: 24 * 17,
+        backgroundColor: 0xffffff,
+        resolution: 1,
+        autoDensity: true
+    });
+    detailField.appendChild(fumenField.view);
+
+    //const decoded = fumen.decoder.decode(results[index][2]);
+    const decoded = fumen.decoder.decode("v115@bhwwwhQpQ4Atglg0A8Le2GJ");
+    console.log(decoded)
+    drawFumen(fumenField, decoded[0])
+    detailWindow.style.display = "block"
+
 }
 
 //mainのwidthによってstyle変更
@@ -399,8 +553,22 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('sidebar_contena').innerHTML = data;
             sidebarjs();
         })
+
+    //Field Stage生成
+    const mino_scale = 22
+    const field = new PIXI.Application({
+        width: 10 * mino_scale,
+        height: 24 * mino_scale,
+        backgroundColor: 0xffffff,
+        resolution: 1,
+        autoDensity: true
+    });
     document.getElementById("Field").appendChild(field.view);
-    drawNull();
+    drawNull(field);
+    field.stage.interactive = true;
+    field.stage.on('pointerup', onDragEnd);
+    field.stage.on('pointerupoutside', onDragEnd);
+
 
     //user呼び出し関係
     const callUsersButton = document.getElementById("userTableButton");
@@ -420,16 +588,16 @@ document.addEventListener('DOMContentLoaded', function () {
     //盤面生成関係
     const fieldWidthInput = document.getElementById("FieldWidth")
     const fieldHeightInput = document.getElementById("FieldHeight")
-    fieldHeightInput.addEventListener('input', generatefield);
-    fieldWidthInput.addEventListener('input', generatefield);
+    fieldHeightInput.addEventListener('input', function () { generatefield(field, mino_scale) });
+    fieldWidthInput.addEventListener('input', function () { generatefield(field, mino_scale) });
 
     //FieldReset
     const fieldReset = document.getElementById("FieldReset")
-    fieldReset.addEventListener("click", fieldreset)
+    fieldReset.addEventListener("click", function () { fieldreset(field) })
 
     //FieldErase
     const fieldErase = document.getElementById("FieldErase")
-    fieldErase.addEventListener("click", fielderase)
+    fieldErase.addEventListener("click", function () { fielderase(field, mino_scale) })
 
     //Clearbutton
     const clearButton = document.getElementById("clear")
@@ -446,7 +614,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll(".toggle-switch").forEach(toggle => {
             toggle.classList.remove("active")
         })
-        fieldreset();
+        fieldreset(field);
     })
 
     //searchbutton
