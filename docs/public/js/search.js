@@ -267,6 +267,7 @@ function getparams() {
         errorText += '"Register date" or "Page" is invalid parameter(s)\n'
     }
     if (errorText == 0) {
+        console.log([fumenID, title, titleOption, discordId, registerDateFrom, registerDateTo, pageFrom, pageTo, fumenType, timeType, fumen01, fumen01Option, fumen01Mirror, fumen01Width])
         return [fumenID, title, titleOption, discordId, registerDateFrom, registerDateTo, pageFrom, pageTo, fumenType, timeType, fumen01, fumen01Option, fumen01Mirror, fumen01Width]
     }
     else {
@@ -307,8 +308,6 @@ async function search() {
         console.log(status)
         if (status == 200) {
             results = data["data"]
-            console.log(results)
-
             const resultCount = document.getElementById("resultCount")
             const table = document.getElementById("resultBody")
             resultCount.innerHTML = '';
@@ -434,7 +433,7 @@ function drawFumen(field, page) {
         }
     }
     //piece使用箇所の塗りつぶし
-    if (page["operation"] !== undefined) {
+    if (page["operation"] != undefined) {
         let typeNum;
         let center;
         let gap;
@@ -462,7 +461,6 @@ function drawFumen(field, page) {
         }
         center = page["operation"]["x"] + page["operation"]["y"] * 10
         for (let piece = 0; piece < 4; piece++) {
-            console.log(piecepattern[page["operation"]["type"]][page["operation"]["rotation"]])
             gap = piecepattern[page["operation"]["type"]][page["operation"]["rotation"]][piece]
             page["_field"]["field"]["pieces"][center + gap] = typeNum
         }
@@ -489,6 +487,10 @@ function drawFumen(field, page) {
         field.stage.addChild(block_graphics)
     }
     drawGrid(field, 17, 24, 10);
+    //comment挿入
+    const fumenComment = document.getElementById("fumenComment")
+    fumenComment.textContent = page["comment"] == 0 ? " " : page["comment"]
+
 }
 
 function calldetail(index) {
@@ -510,6 +512,9 @@ function calldetail(index) {
     detailTiming.textContent = "：" + results[index][5]
     detailComment.textContent = results[index][3] == 0 ? "-" : results[index][3]
 
+    if (detailField.firstChild) {
+        detailField.removeChild(detailField.firstChild)
+    }
     const fumenField = new PIXI.Application({
         width: 10 * 17,
         height: 24 * 17,
@@ -519,10 +524,44 @@ function calldetail(index) {
     });
     detailField.appendChild(fumenField.view);
 
-    //const decoded = fumen.decoder.decode(results[index][2]);
-    const decoded = fumen.decoder.decode("v115@bhwwwhQpQ4Atglg0A8Le2GJ");
-    console.log(decoded)
-    drawFumen(fumenField, decoded[0])
+    let currenPage = 0
+
+    //fumen描画
+    const decoded = fumen.decoder.decode(results[index][2]);
+    drawFumen(fumenField, decoded[currenPage])
+
+    //fumenPageMax
+    const fumenPageMax = document.getElementById("fumenPageMax")
+    fumenPageMax.textContent = decoded.length
+
+    //fumen page関係イベント
+    const fumenPageInput = document.getElementById("fumenPageInput")
+    const previousPage = document.getElementById("previousPage")
+    const nextPage = document.getElementById("nextPage")
+
+    fumenPageInput.value = currenPage + 1
+
+    previousPage.addEventListener("click", function () {
+        if (currenPage > 0) {
+            currenPage--
+            drawFumen(fumenField, decoded[currenPage])
+            fumenPageInput.value = currenPage + 1
+        }
+    })
+
+    nextPage.addEventListener("click", function () {
+        if (currenPage < decoded.length - 1) {
+            currenPage++
+            drawFumen(fumenField, decoded[currenPage])
+            fumenPageInput.value = currenPage + 1
+        }
+    });
+
+    fumenPageInput.addEventListener("input", function () {
+        currenPage = fumenPageInput.value - 1
+        drawFumen(fumenField, decoded[currenPage])
+    });
+
     detailWindow.style.display = "block"
 
 }
@@ -576,12 +615,19 @@ document.addEventListener('DOMContentLoaded', function () {
     callUsersButton.addEventListener("click", callusers);
     userSelect.addEventListener("click", userinput);
 
-    //ローディング
     const popWindow = document.getElementById("popWindow")
     const popContent = popWindow.children[0];
     const popClose = document.getElementById("popClose")
     popClose.addEventListener("click", function () {
         popContent.style.display = "none"
+        popWindow.style.display = "none";
+    })
+
+    //detailClose
+    const detailWindow = document.getElementById("detailWindow")
+    const detailClose = detailWindow.querySelector(".detail-close");
+    detailClose.addEventListener("click", function () {
+        detailWindow.style.display = "none"
         popWindow.style.display = "none";
     })
 

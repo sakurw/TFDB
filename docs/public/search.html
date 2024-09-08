@@ -198,27 +198,26 @@
     <!--Detail画面-->
     <div class="detail-window" id="detailWindow">
       <div class="detail-title-container">
-        <span id="detailIdTitle" class="detail-id-title">1324：L-Spin Double、J-Spin Double、S-Spin Double、Z-Spin
-          Double、T-Spin Double、Perfect Clearせよ：問題</span>
+        <span id="detailIdTitle" class="detail-id-title"></span>
         <span id=" detailClose" class="detail-close">&times;</span>
       </div>
       <table class="detail-table">
         <tbody>
           <tr>
             <td>Author</td>
-            <td id="detailAuthor">：aaaxafdafdas</td>
+            <td id="detailAuthor"></td>
           </tr>
           <tr>
             <td>Register Date</td>
-            <td id="detailRegisterDate">：2024-07-01</td>
+            <td id="detailRegisterDate"></td>
           </tr>
           <tr>
             <td>Fumen Type</td>
-            <td id="detailFumenType">：実践手・知識手</td>
+            <td id="detailFumenType"></td>
           </tr>
           <tr>
             <td>Timing</td>
-            <td id="detailTiming">：派生</td>
+            <td id="detailTiming"></td>
           </tr>
         </tbody>
       </table>
@@ -228,6 +227,13 @@
         </span>
       </div>
       <div id="detailField" class="detail-field"></div>
+      <div class="page-moves">
+        <button class="previous-page" id="previousPage"><i class="fas fa-caret-left"></i></button>
+        <button class="next-page" id="nextPage"><i class="fas fa-caret-right"></i></button>
+      </div>
+      <div id="fumenComment" class="fumen-comment"></div>
+      <div id="fumenPage" class="fumen-page"><input type="number" id="fumenPageInput">/<span id="fumenPageMax"></span>
+      </div>
     </div>
   </div>
 

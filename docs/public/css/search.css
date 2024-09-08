@@ -717,13 +717,14 @@ th {
 
 .detail-window {
     background-color: #ffffff;
-    margin: 50px auto;
+    margin: 0px auto;
     padding: 10px;
     border: #b8b8b8 1px solid;
     border-radius: 20px;
     width: 600px;
-    height: 800px;
+    height: 820px;
     display: none;
+    user-select: text;
 }
 
 .detail-title-container {
@@ -757,7 +758,7 @@ th {
 .detail-comment {
     margin: 10px 0 auto;
     width: 100%;
-    height: 150px;
+    height: 135px;
     overflow-y: scroll;
     border-bottom: #5b5b5b42 1px solid;
 }
@@ -778,10 +779,59 @@ th {
     letter-spacing: .1em;
 }
 
+
 .detail-field {
     position: relative;
     bottom: 0;
-    margin: 0 auto;
     border: #000 1px solid;
     width: 170px;
+    margin: 0 auto;
+}
+
+.page-moves {
+    display: flex;
+    justify-content: center;
+    background-color: transparent;
+    margin: 0 auto;
+    position: relative;
+    top: -411px;
+}
+
+.page-moves button {
+    border: 0;
+    width: 110px;
+    cursor: pointer;
+    height: 413px;
+    background-color: transparent;
+}
+
+.page-moves>button:first-child {
+    text-align: left;
+}
+
+.page-moves>button:nth-child(2) {
+    text-align: right;
+}
+
+.fumen-comment {
+    position: relative;
+    top: -415px;
+    width: 600px;
+    white-space: nowrap;
+    overflow-x: scroll;
+    text-align: center;
+    margin-top: 10px;
+    font-size: 18px;
+
+}
+
+.fumen-page {
+    position: relative;
+    top: -410px;
+    width: 100%;
+    text-align: center;
+}
+
+.fumen-page>input {
+    width: 50px;
 }
