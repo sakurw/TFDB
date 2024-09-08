@@ -5,6 +5,7 @@ const path = require('path');
 const app = express();
 const cors = require('cors');
 const port = process.env.PORT || 5500;
+console.log('PORT:', process.env.PORT);
 app.use(cors({
     origin: 'https://tfdb.onrender.com',
     methods: ['GET', 'POST'],
