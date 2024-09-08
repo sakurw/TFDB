@@ -5,7 +5,7 @@ const path = require('path');
 const app = express();
 const cors = require('cors');
 const port = process.env.PORT || 5500;
-
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 app.use(cors({
     origin: 'https://tfdb.onrender.com',
     methods: ['GET', 'POST'],
@@ -54,6 +54,7 @@ app.get('/api/users', async (req, res) => {
 });
 
 app.post('/api/searchid', express.json(), async (req, res) => {
+    console.log('Received search request:', req.url);
     try {
         const apiKey = process.env.API_KEY;
         const apiUrl = 'https://tfdbapi.com/searchid';
