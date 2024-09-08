@@ -586,7 +586,7 @@ function changestyle() {
 
 //読み込み後呼び出し
 document.addEventListener('DOMContentLoaded', function () {
-    fetch('../public/sidebar/sidebar.html')
+    fetch('./sidebar/sidebar.html')
         .then(response => response.text())
         .then(data => {
             document.getElementById('sidebar_contena').innerHTML = data;
