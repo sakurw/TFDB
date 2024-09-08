@@ -54,7 +54,7 @@ app.get('/api/users', async (req, res) => {
 });
 
 app.post('/api/searchid', express.json(), async (req, res) => {
-    console.log('Received search request:', req.url);
+
     try {
         const apiKey = process.env.API_KEY;
         const apiUrl = 'https://tfdbapi.com/searchid';
@@ -97,6 +97,7 @@ app.post('/api/searchid', express.json(), async (req, res) => {
 });
 
 app.post('/api/search', express.json(), async (req, res) => {
+    console.log('Received search request:', req.url);
     try {
         const apiKey = process.env.API_KEY;
         const apiUrl = 'https://tfdbapi.com/search';
