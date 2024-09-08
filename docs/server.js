@@ -7,7 +7,7 @@ const cors = require('cors');
 const port = process.env.PORT || 5500;
 
 app.use(cors({
-    origin: 'http://127.0.0.1:5501',
+    origin: 'https://tfdb.onrender.com',
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
