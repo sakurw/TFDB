@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-    entry: './index.js',  // プロジェクトルートの index.js を使用
+    entry: './public/js/index.js',  // プロジェクトルートの index.js を使用
     output: {
         filename: 'bundle.js',
         path: path.resolve(__dirname, 'docs'),
