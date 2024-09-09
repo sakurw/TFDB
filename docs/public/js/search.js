@@ -294,7 +294,6 @@ async function search() {
                 bodyParam[bodyLabel[paramIndex]] = params[paramIndex]
             }
             response = await fetch("https://tfdb.onrender.com/api/search", { method: "POST", headers: { 'Content-Type': "application/json" }, body: JSON.stringify(bodyParam) });
-            console.log('Response status:', response.status);
         }
         else {
             response = await fetch("https://tfdb.onrender.com/api/searchid", { method: "POST", headers: { 'Content-Type': "application/json" }, body: JSON.stringify({ "FumenId": params[0] }) });
