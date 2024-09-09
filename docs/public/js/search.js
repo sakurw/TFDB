@@ -294,6 +294,7 @@ async function search() {
     loadingWindow.style.display = "block";
     try {
         const base = process.env.BASE
+        console.log(base)
         if (params[0] == 0) {
             let bodyParam = {}
             for (let paramIndex = 1; paramIndex < params.length; paramIndex++) {
