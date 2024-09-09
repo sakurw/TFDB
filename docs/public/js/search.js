@@ -1,9 +1,5 @@
 import { sidebarjs } from "../sidebar/sidebar.js";
 import * as fumen from 'https://esm.run/tetris-fumen';
-/*
-Detail
-apiを変える
- */
 
 //検索結果格納用
 let results = [];
@@ -168,8 +164,7 @@ async function callusers() {
     loadingWindow.style.display = "block";
     if (firstCall == true) {
         try {
-            const base = window.config.apiUrl
-            const response = await fetch(base + "/users", { method: "GET", headers: { 'Content-Type': "application/json" } });
+            const response = await fetch("https://tfdb.onrender.com/api/users", { method: "GET", headers: { 'Content-Type': "application/json" } });
             const status = response['status']
             const data = await response.json();
             if (status == 200) {
@@ -293,18 +288,16 @@ async function search() {
     popWindow.style.display = "block";
     loadingWindow.style.display = "block";
     try {
-        const base = window.config.apiUrl
-        console.log(base)
         if (params[0] == 0) {
             let bodyParam = {}
             for (let paramIndex = 1; paramIndex < params.length; paramIndex++) {
                 bodyParam[bodyLabel[paramIndex]] = params[paramIndex]
             }
-            response = await fetch(base + "/search", { method: "POST", headers: { 'Content-Type': "application/json" }, body: JSON.stringify(bodyParam) });
+            response = await fetch("https://tfdb.onrender.com/api/search", { method: "POST", headers: { 'Content-Type': "application/json" }, body: JSON.stringify(bodyParam) });
             console.log('Response status:', response.status);
         }
         else {
-            response = await fetch(base + "/searchid", { method: "POST", headers: { 'Content-Type': "application/json" }, body: JSON.stringify({ "FumenId": params[0] }) });
+            response = await fetch("https://tfdb.onrender.com/api/searchid", { method: "POST", headers: { 'Content-Type': "application/json" }, body: JSON.stringify({ "FumenId": params[0] }) });
         }
         const status = response['status']
         const data = await response.json();
