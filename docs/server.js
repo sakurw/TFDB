@@ -10,7 +10,8 @@ console.log('PORT:', process.env.PORT);
 app.use(cors({
     origin: process.env.ALLOWED_ORIGIN,
     methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
 }));
 
 
@@ -144,4 +145,8 @@ app.get('*', (req, res) => {
 });
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });

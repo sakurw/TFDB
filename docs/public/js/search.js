@@ -164,7 +164,7 @@ async function callusers() {
     loadingWindow.style.display = "block";
     if (firstCall == true) {
         try {
-            const response = await fetch("https://tfdb.onrender.com/api/users", { method: "GET", headers: { 'Content-Type': "application/json" } });
+            const response = await fetch("https://tfdb.onrender.com/api/users", { mode: 'cors', credentials: 'include', method: "GET", headers: { 'Content-Type': "application/json" } });
             const status = response['status']
             const data = await response.json();
             if (status == 200) {
