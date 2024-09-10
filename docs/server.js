@@ -23,7 +23,7 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(express.static(path.join(__dirname, 'docs', 'public')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/api/users', async (req, res) => {
     try {
@@ -140,7 +140,7 @@ app.post('/api/search', express.json(), async (req, res) => {
     }
 });
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'docs', 'public', 'index.html'));
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
