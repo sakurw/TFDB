@@ -1,18 +1,18 @@
 require('dotenv').config();
-const https = require('https');
 const express = require('express');
+const https = require('https');
 const path = require('path');
 const app = express();
 const cors = require('cors');
 const port = process.env.PORT || 5500;
 console.log('PORT:', process.env.PORT);
+
 app.use(cors({
-    origin: 'https://tfdb.onrender.com',
+    origin: process.env.ALLOWED_ORIGIN,
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-app.use(express.static('public'));
 
 app.use((req, res, next) => {
     const allowedOrigin = process.env.ALLOWED_ORIGIN;
@@ -22,6 +22,8 @@ app.use((req, res, next) => {
     }
     next();
 });
+
+app.use(express.static(path.join(__dirname, 'docs', 'public')));
 
 app.get('/api/users', async (req, res) => {
     try {
@@ -35,7 +37,6 @@ app.get('/api/users', async (req, res) => {
         };
         https.get(apiUrl, options, (apiRes) => {
             let data = '';
-
             apiRes.on('data', (chunk) => {
                 data += chunk;
             });
@@ -138,7 +139,9 @@ app.post('/api/search', express.json(), async (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 });
-
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'docs', 'public', 'index.html'));
+});
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
