@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "main": "server.js",
     "scripts": {
-        "build": "npm install && npm run build",
+        "build": "echo 'Build step completed'",
         "start": "node server.js"
     },
     "dependencies": {
