@@ -4,28 +4,6 @@ const https = require('https');
 const path = require('path');
 const cors = require('cors');
 
-//2
-function testApiConnection() {
-    return new Promise((resolve, reject) => {
-        https.get('https://tfdbapi.com', (res) => {
-            let data = '';
-            res.on('data', (chunk) => { data += chunk; });
-            res.on('end', () => {
-                console.log('API connection test response:', data);
-                resolve(data);
-            });
-        }).on('error', (err) => {
-            console.error('API connection test error:', err);
-            reject(err);
-        });
-    });
-}
-
-// サーバー起動時にテストを実行
-testApiConnection()
-    .then(() => console.log('API connection test successful'))
-    .catch(() => console.log('API connection test failed'));
-
 
 const app = express();
 const port = process.env.PORT || 5500;
