@@ -33,6 +33,7 @@ async function makeApiRequest(method, url, data = null) {
         if (data) {
             options.headers['Content-Length'] = Buffer.byteLength(JSON.stringify(data));
         }
+        console.log('API URL:', process.env.API_URL + url);
 
         const req = https.request(process.env.API_URL + url, options, (res) => {
             let responseData = '';
