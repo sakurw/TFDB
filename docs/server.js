@@ -57,7 +57,7 @@ async function makeApiRequest(method, url, data = null) {
     });
 }
 
-app.get('https://tfdb.onrender.com/api/users', async (req, res) => {
+app.get('/api/users', async (req, res) => {
     console.log('Received users request:', req.url);
     try {
         const data = await makeApiRequest('GET', '/users');
@@ -68,7 +68,7 @@ app.get('https://tfdb.onrender.com/api/users', async (req, res) => {
     }
 });
 
-app.post('https://tfdb.onrender.com/api/searchid', async (req, res) => {
+app.post('/api/searchid', async (req, res) => {
     console.log('Received searchid request:', req.url);
     try {
         const data = await makeApiRequest('POST', '/searchid', req.body);
@@ -79,7 +79,7 @@ app.post('https://tfdb.onrender.com/api/searchid', async (req, res) => {
     }
 });
 
-app.post('https://tfdb.onrender.com/api/search', async (req, res) => {
+app.post('/api/search', async (req, res) => {
     console.log('Received search request:', req.url);
     try {
         const data = await makeApiRequest('POST', '/search', req.body);
