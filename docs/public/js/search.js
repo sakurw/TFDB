@@ -263,7 +263,6 @@ function getparams() {
         errorText += '"Register date" or "Page" is invalid parameter(s)\n'
     }
     if (errorText == 0) {
-        console.log([fumenID, title, titleOption, discordId, registerDateFrom, registerDateTo, pageFrom, pageTo, fumenType, timeType, fumen01, fumen01Option, fumen01Mirror, fumen01Width])
         return [fumenID, title, titleOption, discordId, registerDateFrom, registerDateTo, pageFrom, pageTo, fumenType, timeType, fumen01, fumen01Option, fumen01Mirror, fumen01Width]
     }
     else {
@@ -300,8 +299,6 @@ async function search() {
         }
         const status = response['status']
         const data = await response.json();
-        console.log(data)
-        console.log(status)
         if (status == 200) {
             results = data["data"]
             const resultCount = document.getElementById("resultCount")

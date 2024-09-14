@@ -7,7 +7,6 @@ const cors = require('cors');
 
 const app = express();
 const port = process.env.PORT || 5500;
-console.log('PORT:', port);
 
 app.use(cors({
     origin: process.env.ALLOWED_ORIGIN,
@@ -58,7 +57,6 @@ async function makeApiRequest(method, url, data = null) {
 }
 
 app.get('/api/users', async (req, res) => {
-    console.log('Received users request:', req.url);
     try {
         const data = await makeApiRequest('GET', '/users');
         res.json(data);
@@ -69,7 +67,6 @@ app.get('/api/users', async (req, res) => {
 });
 
 app.post('/api/searchid', async (req, res) => {
-    console.log('Received searchid request:', req.url);
     try {
         const data = await makeApiRequest('POST', '/searchid', req.body);
         res.json(data);
@@ -80,7 +77,6 @@ app.post('/api/searchid', async (req, res) => {
 });
 
 app.post('/api/search', async (req, res) => {
-    console.log('Received search request:', req.url);
     try {
         const data = await makeApiRequest('POST', '/search', req.body);
         res.json(data);
