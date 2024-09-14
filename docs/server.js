@@ -21,7 +21,6 @@ app.use(express.json());
 
 
 async function makeApiRequest(method, url, data = null) {
-    console.log(`Making ${method} request to ${process.env.API_URL}${url}`);
     return new Promise((resolve, reject) => {
         const options = {
             method,
@@ -35,26 +34,19 @@ async function makeApiRequest(method, url, data = null) {
             options.headers['Content-Length'] = Buffer.byteLength(JSON.stringify(data));
         }
 
-        console.log(`Making ${method} request to ${process.env.API_URL}${url}`);
-
         const req = https.request(process.env.API_URL + url, options, (res) => {
             let responseData = '';
             res.on('data', (chunk) => { responseData += chunk; });
             res.on('end', () => {
-                console.log('Raw API response:', responseData);
                 try {
-                    const parsedData = JSON.parse(responseData);
-                    console.log('Parsed API response:', parsedData);
                     resolve(JSON.parse(responseData));
                 } catch (error) {
-                    console.error('Failed to parse API response:', error);
                     reject(new Error('Failed to parse API response'));
                 }
             });
         });
 
         req.on('error', (error) => {
-            console.error('API request error:', error);
             reject(new Error(`API request failed: ${error.message}`));
         });
 
@@ -72,11 +64,7 @@ app.get('/api/users', async (req, res) => {
         res.json(data);
     } catch (error) {
         console.error('Error in /api/users:', error);
-        if (error.message.includes('Failed to parse API response')) {
-            res.status(500).json({ error: "Invalid response from external API", details: error.message });
-        } else {
-            res.status(500).json({ error: "Error calling external API", details: error.message });
-        }
+        res.status(500).json({ error: "Error calling external API" });
     }
 });
 
