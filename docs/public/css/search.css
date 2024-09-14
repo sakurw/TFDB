@@ -1,16 +1,16 @@
 body {
-    user-select: none;
+    user-select: none
 }
 
 th {
     font-weight: 400;
-    text-align: center;
+    text-align: center
 }
 
 .sidebar-contena {
     position: fixed;
     top: 0;
-    left: 0;
+    left: 0
 }
 
 .main {
@@ -19,7 +19,7 @@ th {
     position: relative;
     top: 0;
     transition: width .5s, margin-left .5s;
-    display: flex;
+    display: flex
 }
 
 .title-bar {
@@ -27,13 +27,9 @@ th {
     width: 100%
 }
 
-.search-box {
-    width: 800px;
-}
-
 .search-box>div:last-child {
     display: flex;
-    justify-content: center;
+    justify-content: center
 }
 
 .group-button,
@@ -68,6 +64,7 @@ th {
 }
 
 .search-box {
+    width: 800px;
     position: relative;
     top: 60px;
     font-family: consolas
@@ -88,7 +85,7 @@ th {
 
 .term-group>div:last-child {
     width: 600px;
-    border-bottom: #000 2px solid;
+    border-bottom: 2px solid #000
 }
 
 .group-button {
@@ -133,14 +130,11 @@ th {
 
 .group-content {
     width: 580px;
-    font-family: Yu Gothic UI Semibold
-}
-
-.group-content {
+    font-family: Yu Gothic UI Semibold;
     padding-bottom: 15px;
     background-color: #fff;
     margin-left: 10px;
-    display: none;
+    display: none
 }
 
 .group-content>div {
@@ -152,7 +146,7 @@ th {
 }
 
 .group-button.active+.group-content {
-    max-height: 1020px;
+    max-height: 1020px
 }
 
 .box {
@@ -163,23 +157,22 @@ th {
     visibility: hidden;
     width: fit-content;
     background-color: #fff;
-    border: #000 3px solid;
+    border: 3px solid #000;
     border-radius: 20px;
     position: absolute;
     left: 0;
     z-index: 1;
-    padding: 10px;
-    padding-top: 5px;
+    padding: 5px 10px 10px;
     text-align: left;
-    margin-top: 25px;
+    margin-top: 25px
 }
 
 .info-circle {
-    margin-left: 5px;
+    margin-left: 5px
 }
 
 .info-circle:hover~.hover-text {
-    visibility: visible;
+    visibility: visible
 }
 
 .FumenId {
@@ -212,13 +205,12 @@ th {
 }
 
 .field-toggles>.toggle-container:nth-child(2) {
-    margin-left: -40px;
+    margin-left: -40px
 }
 
 .field-toggles>.toggle-container:nth-child(2)>.toggle-labels>.toggle-label:last-child {
-    margin-left: 0;
+    margin-left: 0
 }
-
 
 .toggle-labels {
     justify-content: space-between;
@@ -229,7 +221,7 @@ th {
     display: flex;
     width: 225px;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-between
 }
 
 .toggle-label {
@@ -239,7 +231,7 @@ th {
     margin-top: 0 !important;
     margin-left: 10px;
     display: flex;
-    width: fit-content;
+    width: fit-content
 }
 
 .toggle-switch {
@@ -249,7 +241,7 @@ th {
     border: 2px solid #000;
     cursor: pointer;
     margin-left: 10px;
-    box-sizing: border-box;
+    box-sizing: border-box
 }
 
 .toggle-switch.active .toggle-button {
@@ -263,42 +255,41 @@ th {
     background-color: #000;
     position: absolute;
     border: 2px solid #fff;
-    transition: left .15s ease;
+    transition: left .15s
 }
 
 .field-match-toggle {
-    display: block;
+    display: block
 }
 
 .exact-only {
-    display: none;
-
+    display: none
 }
 
-.exact-only::before,
-.exact-only::after {
+.exact-only::after,
+.exact-only::before {
     content: '';
     position: absolute;
     top: 50%;
     left: 50%;
     width: 100%;
     height: 2px;
-    background-color: black;
+    background-color: #000
 }
 
 .exact-only::before {
-    transform: translate(-50%, -50%) rotate(20deg);
+    transform: translate(-50%, -50%) rotate(20deg)
 }
 
 .exact-only::after {
-    transform: translate(-50%, -50%) rotate(-20deg);
+    transform: translate(-50%, -50%) rotate(-20deg)
 }
 
 .exact-only-text {
-    color: #ff0000;
+    color: red;
     width: 18em;
     display: none;
-    margin-left: 80px;
+    margin-left: 80px
 }
 
 .discordid {
@@ -306,9 +297,8 @@ th {
 }
 
 .action-button {
-
     background: #fff;
-    border: #000 1px solid;
+    border: 1px solid #000;
     height: 27px;
     cursor: pointer
 }
@@ -318,8 +308,8 @@ th {
 }
 
 .action-button:active {
-    background: #000000;
-    color: #ffffff;
+    background: #000;
+    color: #fff
 }
 
 .range-from {
@@ -343,11 +333,11 @@ th {
 }
 
 .Field {
-    width: 222px;
+    width: 222px
 }
 
 .Field canvas {
-    border: #000 1px solid;
+    border: 1px solid #000;
     position: relative;
     right: 0
 }
@@ -361,13 +351,13 @@ th {
 .field-buttons {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    align-items: flex-end
 }
 
 .field-buttons button {
     margin-top: 5px;
     width: 100px;
-    height: 30px;
+    height: 30px
 }
 
 .field-toggles {
@@ -378,33 +368,33 @@ th {
 
 .reset-button {
     position: relative;
-    right: 0;
+    right: 0
 }
 
 .search-buttons {
-    margin-top: 50px;
+    margin-top: 50px
 }
 
 .search-buttons>button {
     height: 30px;
     width: 80px;
     font-family: Yu Gothic UI Semibold;
-    font-size: 16px;
+    font-size: 16px
 }
 
 .search-buttons>button:nth-child(2) {
-    margin-left: 10px;
+    margin-left: 10px
 }
 
 .result {
     position: relative;
     width: 600px;
-    border-bottom: #5b5b5b42 1px solid;
+    border-bottom: 1px solid #5b5b5b42;
     display: flex;
     flex-direction: column;
     padding-left: 10px;
     height: 90vh;
-    margin-top: 30px;
+    margin-top: 30px
 }
 
 .result-container {
@@ -413,122 +403,115 @@ th {
     width: 100%;
     height: 300px;
     overflow-y: scroll;
-    flex: 1 1 100%;
-
+    flex: 1 1 100%
 }
 
 .result-label {
     margin-top: 20px;
     font-family: consolas;
     font-size: 25px;
-    font-weight: bold;
+    font-weight: 700;
     width: 100%;
-    text-align: center;
+    text-align: center
 }
 
 .result-count {
-    font-weight: bold;
+    font-weight: 700;
     font-family: consolas;
     font-size: 18px;
     padding-left: 20px;
     margin-top: 10px;
     padding-bottom: 10px;
     margin-bottom: 5px;
-    border-bottom: #5b5b5b42 1px solid;
+    border-bottom: 1px solid #5b5b5b42
 }
 
 .result-table {
     border-collapse: separate;
     border-spacing: 0;
-    width: 100%;
+    width: 100%
 }
 
 .result-table>thead {
     position: sticky;
     top: 0;
-    background-color: #ffffff;
+    background-color: #fff
 }
 
 .result-table>thead>tr>th:first-child {
     font-family: consolas;
-    font-weight: bold;
+    font-weight: 700;
     font-size: 18px;
-    border-left: none;
+    border-left: none
 }
 
 .result-table>thead>tr th {
     font-family: consolas;
-    font-weight: bold;
+    font-weight: 700;
     font-size: 18px;
-    border-left: #a4a4a433 1px solid;
-    padding-bottom: 5px;
+    border-left: 1px solid #a4a4a433;
+    padding-bottom: 5px
 }
 
 .result-table>thead>tr>th:nth-child(2) {
-    width: 65px;
+    width: 65px
 }
 
 .result-table>thead>tr>th:nth-child(3) {
-    width: 110px;
+    width: 110px
 }
 
 .result-table>thead>tr>th:nth-child(4) {
     width: 60px;
-    margin-right: 1px;
+    margin-right: 1px
 }
 
 .result-table>thead>tr>th:last-child {
-    width: 70px;
+    width: 70px
 }
 
 .result-table>tbody>tr>td:first-child {
     text-align: left;
     text-wrap: pretty;
-    user-select: text;
+    user-select: text
 }
 
 .result-table>tbody>tr>td:nth-child(2) {
-    width: 60px;
+    width: 60px
 }
 
 .result-table>tbody>tr>td:nth-child(3) {
-    width: 110px;
+    width: 110px
 }
 
 .result-table>tbody>tr>td:nth-child(4) {
-    width: 65px;
+    width: 65px
 }
 
 .result-table>tbody>tr>td:last-child {
-    width: 70px;
+    width: 70px
 }
 
 .result-table tbody tr td {
     font-size: 14px;
-    text-align: center;
+    text-align: center
 }
 
-.result-table>tbody tr:nth-child(odd) {
-    background-color: #f5f5f5;
-}
-
+.result-table>tbody tr:nth-child(odd),
 .result-table>tbody tr:nth-child(odd)>td>button {
-    background-color: #f5f5f5;
+    background-color: #f5f5f5
 }
 
-.result-table>tbody tr:nth-child(even) {
-    background-color: #ffffff;
-}
-
-.result-table>tbody tr:nth-child(even)>td>button {
-    background-color: #ffffff;
+.result-table>tbody tr:nth-child(2n),
+.result-table>tbody tr:nth-child(2n)>td>button {
+    background-color: #fff
 }
 
 .result-button {
     border: none;
     width: 100%;
     text-align: center;
-    font-size: 20px;
+    font-size: 20px
 }
 
 .pop-background {
@@ -539,26 +522,25 @@ th {
     height: 100%;
     background-color: #68686845;
     top: 0;
-    left: 0;
-
+    left: 0
 }
 
 .pop-content {
-    background-color: #ffffff;
+    background-color: #fff;
     margin: 50px auto;
     padding: 10px;
-    border: #b8b8b8 1px solid;
+    border: 1px solid #b8b8b8;
     border-radius: 20px;
     width: 600px;
     height: 430px;
-    display: none;
+    display: none
 }
 
 .pop-content>div:last-child {
     width: 100%;
     height: 55px;
     display: flex;
-    align-items: center;
+    align-items: center
 }
 
 .user-title {
@@ -566,7 +548,7 @@ th {
     font-family: Yu Gothic UI Semibold;
     position: relative;
     top: 5px;
-    left: 30px;
+    left: 30px
 }
 
 .pop-close {
@@ -574,41 +556,40 @@ th {
     margin-right: 10px;
     font-size: 35px;
     color: #0000004a;
-    font-weight: bold;
-    cursor: pointer;
+    font-weight: 700;
+    cursor: pointer
 }
 
 .users-container {
-    border: #000 1px solid;
+    border: 1px solid #000;
     width: 580px;
     height: 330px;
-    margin: 10px auto;
-    margin-bottom: 0;
+    margin: 10px auto 0;
     overflow-y: scroll;
-    overflow-x: auto;
+    overflow-x: auto
 }
 
 .user-table {
     border-collapse: collapse;
-    width: 100%;
+    width: 100%
 }
 
 .user-table>thead {
     position: sticky;
     top: 0;
-    background-color: #ffffff;
-    z-index: 1;
+    background-color: #fff;
+    z-index: 1
 }
 
 .user-table>thead>tr th {
     text-align: left;
     font-family: segoe UI;
-    font-weight: bold;
+    font-weight: 700
 }
 
 .user-table>thead>tr>th:last-child {
     width: 55%;
-    padding-left: 1em;
+    padding-left: 1em
 }
 
 .user-table thead th:not(:last-child)::after {
@@ -618,28 +599,28 @@ th {
     top: 0;
     height: 100%;
     width: .5px;
-    background-color: #a4a4a433;
+    background-color: #a4a4a433
 }
 
 .user-table tbody tr {
-    height: 10px;
+    height: 10px
 }
 
 .user-table tbody {
     position: relative;
-    top: 10px;
+    top: 10px
 }
 
 .user-table tbody tr td:last-child {
-    padding-left: 1em;
+    padding-left: 1em
 }
 
 .user-input-button {
     width: 90%;
     margin: 10px auto;
     border-radius: 20px;
-    font-weight: bold;
-    font-size: 15px;
+    font-weight: 700;
+    font-size: 15px
 }
 
 .loading-window {
@@ -650,9 +631,8 @@ th {
     width: 380px;
     display: none;
     transform: translate(-50%, -50%);
-    z-index: 2;
+    z-index: 2
 }
-
 
 .loading-t {
     position: relative;
@@ -661,74 +641,71 @@ th {
     top: 25%;
     left: 25%;
     transform: translate(-50%, -50%);
+    animation: 2s steps(1) infinite rotateMino
 }
 
 .block {
     width: 50px;
     height: 50px;
-    position: absolute;
+    position: absolute
 }
 
 .loading-t div:first-child {
     top: 50px;
-    left: 50px;
+    left: 50px
 }
 
 .loading-t div:nth-child(2) {
     top: 0;
-    left: 50px;
+    left: 50px
 }
 
 .loading-t div:nth-child(3) {
     top: 50px;
-    left: 0;
+    left: 0
 }
 
 .loading-t div:last-child {
     top: 50px;
-    left: 100px;
+    left: 100px
 }
 
 @keyframes rotateMino {
     0% {
-        transform: rotate(0deg);
+        transform: rotate(0)
     }
 
     25% {
-        transform: rotate(90deg);
+        transform: rotate(90deg)
     }
 
     50% {
-        transform: rotate(180deg);
+        transform: rotate(180deg)
     }
 
     75% {
-        transform: rotate(270deg);
+        transform: rotate(270deg)
     }
 
     100% {
-        transform: rotate(360deg);
+        transform: rotate(360deg)
     }
 }
 
-.loading-t {
-    animation: rotateMino 2s steps(1) infinite;
-}
-
 .detail-window {
-    background-color: #ffffff;
-    margin: 0px auto;
+    background-color: #fff;
+    margin: 0 auto;
     padding: 10px;
-    border: #b8b8b8 1px solid;
+    border: 1px solid #b8b8b8;
     border-radius: 20px;
     width: 600px;
     height: 820px;
     display: none;
-    user-select: text;
+    user-select: text
 }
 
 .detail-title-container {
-    display: flex;
+    display: flex
 }
 
 .detail-close {
@@ -736,8 +713,8 @@ th {
     margin-right: 10px;
     font-size: 35px;
     color: #0000004a;
-    font-weight: bold;
-    cursor: pointer;
+    font-weight: 700;
+    cursor: pointer
 }
 
 .detail-id-title {
@@ -748,11 +725,11 @@ th {
     position: relative;
     top: 5px;
     left: 10px;
-    flex: 1;
+    flex: 1
 }
 
 .detail-table {
-    margin-top: 20px;
+    margin-top: 20px
 }
 
 .detail-comment {
@@ -760,32 +737,31 @@ th {
     width: 100%;
     height: 135px;
     overflow-y: scroll;
-    border-bottom: #5b5b5b42 1px solid;
+    border-bottom: 1px solid #5b5b5b42
 }
 
 .detail-comment>span {
     white-space: pre-line;
     text-wrap: pretty;
-    user-select: text;
+    user-select: text
 }
 
 .detail-comment>div:first-child {
-    border-bottom: #5b5b5b42 1px solid;
+    border-bottom: 1px solid #5b5b5b42;
     position: sticky;
-    top: 0px;
-    background-color: #ffffff;
+    top: 0;
+    background-color: #fff;
     margin: 0;
     font-size: 18px;
-    letter-spacing: .1em;
+    letter-spacing: .1em
 }
-
 
 .detail-field {
     position: relative;
     bottom: 0;
-    border: #000 1px solid;
+    border: 1px solid #000;
     width: 170px;
-    margin: 0 auto;
+    margin: 0 auto
 }
 
 .page-moves {
@@ -794,7 +770,7 @@ th {
     background-color: transparent;
     margin: 0 auto;
     position: relative;
-    top: -411px;
+    top: -411px
 }
 
 .page-moves button {
@@ -802,15 +778,15 @@ th {
     width: 110px;
     cursor: pointer;
     height: 413px;
-    background-color: transparent;
+    background-color: transparent
 }
 
 .page-moves>button:first-child {
-    text-align: left;
+    text-align: left
 }
 
 .page-moves>button:nth-child(2) {
-    text-align: right;
+    text-align: right
 }
 
 .fumen-comment {
@@ -821,17 +797,16 @@ th {
     overflow-x: scroll;
     text-align: center;
     margin-top: 10px;
-    font-size: 18px;
-
+    font-size: 18px
 }
 
 .fumen-page {
     position: relative;
     top: -410px;
     width: 100%;
-    text-align: center;
+    text-align: center
 }
 
 .fumen-page>input {
-    width: 50px;
+    width: 50px
 }

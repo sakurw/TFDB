@@ -8,25 +8,24 @@
     left: 0;
     container-type: inline-size;
     opacity: 1;
-    transition: width 0.5s ease;
-    will-change: width;
+    transition: width .5s;
+    will-change: width
 }
 
 .sidebar.width-narrow {
-    width: 50px;
+    width: 50px
 }
 
 .sidebar.width-wide {
-    width: 250px;
+    width: 250px
 }
 
 .sidebar-link {
     text-decoration: none;
-    color: #000000;
+    color: #000
 }
 
 @container(min-width:240px) {
-
     .sidebar-button-close {
         cursor: pointer;
         color: #0000004a;
@@ -42,7 +41,7 @@
         line-height: 0;
         position: absolute;
         left: 100%;
-        border: 0;
+        border: 0
     }
 
     .logo {
@@ -53,11 +52,11 @@
         background-position: 40%;
         background-repeat: no-repeat;
         padding: 0;
-        background-image: url(../images/logo.png);
+        background-image: url(../images/logo.png)
     }
 
     .logo button {
-        display: none;
+        display: none
     }
 
     .sidebar-list {
@@ -70,7 +69,7 @@
         font-size: 50px;
         list-style-type: none;
         position: absolute;
-        overflow: hidden;
+        overflow: hidden
     }
 
     .sidebar-item {
@@ -81,27 +80,27 @@
         font-family: Changa One, Impact, sans-serif;
         font-size: 35px;
         line-height: 30px;
-        display: flex;
+        display: flex
     }
 
     .sidebar-item i {
         text-align: center;
         margin-right: 22px;
-        font-size: 30px;
+        font-size: 30px
     }
 
     .discord-logo {
         cursor: pointer;
         object-fit: fill;
         background-image: url(../images/full_logo_black_RGB.png);
-        background-position: 0%;
+        background-position: 0;
         background-repeat: no-repeat;
         background-size: contain;
         width: 100%;
         height: 30px;
         position: absolute;
         bottom: 65px;
-        margin-left: 4px;
+        margin-left: 4px
     }
 
     .github-logo {
@@ -111,38 +110,38 @@
         height: 40px;
         position: absolute;
         bottom: 10px;
-        margin-left: 4px;
+        margin-left: 4px
     }
 
     .github-icon {
         width: 17%;
         height: 100%;
         background-image: url(../images/github-mark.png);
-        background-position: 0%;
+        background-position: 0;
         background-repeat: no-repeat;
-        background-size: contain;
+        background-size: contain
     }
 
     .github-letter {
         width: 83%;
         height: 40px;
         background-image: url(../images/GitHub_Logo.png);
-        background-position: 0%;
+        background-position: 0;
         background-repeat: no-repeat;
         background-size: contain;
-        margin-left: 3px;
+        margin-left: 3px
     }
 }
 
-@container (max-width: 239px) {
+@container (max-width:239px) {
     .sidebar {
         background-color: #fff;
         height: 100vh;
-        box-shadow: 7px 0 5px 1px #0003;
+        box-shadow: 7px 0 5px 1px #0003
     }
 
     .sidebar-button-close {
-        display: none;
+        display: none
     }
 
     .logo {
@@ -150,7 +149,7 @@
         height: 110px;
         margin: 0;
         padding: 0;
-        background-image: none;
+        background-image: none
     }
 
     .logo button {
@@ -161,7 +160,7 @@
         display: block;
         font-size: 30px;
         background-color: transparent;
-        border: 0;
+        border: 0
     }
 
     .sidebar-list {
@@ -174,7 +173,7 @@
         font-size: 50px;
         list-style-type: none;
         position: absolute;
-        overflow: hidden;
+        overflow: hidden
     }
 
     .sidebar-item {
@@ -185,31 +184,31 @@
         font-family: Changa One, Impact, sans-serif;
         font-size: 35px;
         line-height: 30px;
-        display: flex;
+        display: flex
     }
 
     .sidebar-item i {
         text-align: center;
         margin-right: 22px;
-        font-size: 30px;
+        font-size: 30px
     }
 
     .sidebar-item div {
-        display: none;
+        display: none
     }
 
     .discord-logo {
         cursor: pointer;
         object-fit: fill;
         background-image: url(../images/icon_clyde_black_RGB.png);
-        background-position: 0%;
+        background-position: 0;
         background-repeat: no-repeat;
         background-size: contain;
         width: 100%;
         height: 30px;
         position: absolute;
         bottom: 65px;
-        margin-left: 4px;
+        margin-left: 4px
     }
 
     .github-logo {
@@ -219,19 +218,19 @@
         height: 40px;
         position: absolute;
         bottom: 10px;
-        margin-left: 4px;
+        margin-left: 4px
     }
 
     .github-icon {
         width: 100%;
         height: 100%;
         background-image: url(../images/github-mark.png);
-        background-position: 0%;
+        background-position: 0;
         background-repeat: no-repeat;
-        background-size: contain;
+        background-size: contain
     }
 
     .github-letter {
-        display: none;
+        display: none
     }
 }
