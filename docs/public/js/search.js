@@ -213,7 +213,7 @@ async function callUsers() {
     loadingWindow.style.display = "block";
     if (firstCall) {
         try {
-            const response = await fetch("http://127.0.0.1:5500/api/users", { mode: 'cors', credentials: 'include', method: "GET", headers: { 'Content-Type': "application/json" } });
+            const response = await fetch("https://tfdb.onrender.com/api/users", { mode: 'cors', credentials: 'include', method: "GET", headers: { 'Content-Type': "application/json" } });
             const status = response.status;
             const data = await response.json();
             if (status === 200) {
@@ -321,9 +321,9 @@ async function search() {
             for (let paramIndex = 1; paramIndex < params.length; paramIndex++) {
                 bodyParam[bodyLabel[paramIndex]] = params[paramIndex];
             }
-            response = await fetch("http://127.0.0.1:5500/api/search", { method: "POST", headers: { 'Content-Type': "application/json" }, body: JSON.stringify(bodyParam) });
+            response = await fetch("https://tfdb.onrender.com/api/search", { method: "POST", headers: { 'Content-Type': "application/json" }, body: JSON.stringify(bodyParam) });
         } else {
-            response = await fetch("http://127.0.0.1:5500/api/searchid", { method: "POST", headers: { 'Content-Type': "application/json" }, body: JSON.stringify({ "FumenId": params[0] }) });
+            response = await fetch("https://tfdb.onrender.com/api/searchid", { method: "POST", headers: { 'Content-Type': "application/json" }, body: JSON.stringify({ "FumenId": params[0] }) });
         }
         const status = response.status;
         const data = await response.json();
