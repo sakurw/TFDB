@@ -1,513 +1,430 @@
 import { sidebarjs } from "../sidebar/sidebar.js";
 import * as fumen from 'https://esm.run/tetris-fumen';
 
-//検索結果格納用
 let results = [];
 let detailButton;
 
+const MINO_SCALE = 22;
+const GRID_COLOR = 0x4d4d4d;
+const GRID_ALPHA = 0.6;
+const BORDER_COLOR = 0xffffff;
 
+//上からblank,I,L,O,Z,T,J,S,garbage
+const PIECE_COLORS = {
+    0: 0x000000,
+    1: 0x00fafa,
+    2: 0xe89b02,
+    3: 0xf7f70a,
+    4: 0xf00202,
+    5: 0xf002f0,
+    6: 0x0000ff,
+    7: 0x02d902,
+    8: 0x999999
+};
 
-//罫線配置
-function drawGrid(field, mino_scale, height, width) {
-    const grid_graphic = new PIXI.Graphics();
-    grid_graphic.lineStyle(2, 0x4d4d4d, .6);
-
-    for (let col_grid_start = mino_scale; col_grid_start <= (width - 1) * mino_scale; col_grid_start += mino_scale) {
-        grid_graphic.moveTo(col_grid_start, 0);
-        grid_graphic.lineTo(col_grid_start, height * mino_scale);
+const PIECE_PATTERNS = {
+    T: {
+        spawn: [-1, 0, 10, 1],
+        left: [-1, 0, 10, -10],
+        right: [0, 10, -10, 1],
+        reverse: [0, -1, -10, 1]
+    },
+    I: {
+        spawn: [-1, 0, 1, 2],
+        left: [-10, 0, 10, 20],
+        right: [10, 0, -10, -20],
+        reverse: [-2, -1, 0, 1]
+    },
+    O: {
+        spawn: [0, 10, 1, 11],
+        left: [-1, 0, 9, 10],
+        right: [0, -10, -1, -11],
+        reverse: [-11, -1, -10, 0]
+    },
+    S: {
+        spawn: [-1, 0, 10, 11],
+        left: [-1, 9, 0, -10],
+        right: [0, 10, 1, -9],
+        reverse: [-11, -10, 0, 1]
+    },
+    Z: {
+        spawn: [0, 1, 10, 9],
+        left: [0, 10, -1, -11],
+        right: [0, -10, 1, 11],
+        reverse: [-1, 0, -10, -9]
+    },
+    L: {
+        spawn: [0, -1, 1, 11],
+        left: [0, 9, 10, -10],
+        right: [10, 0, -10, -9],
+        reverse: [-1, -11, 0, 1]
+    },
+    J: {
+        spawn: [0, 1, -1, 9],
+        left: [0, -11, 10, -10],
+        right: [10, 0, -10, 11],
+        reverse: [1, -9, 0, -1]
     }
-    for (let row_grid_start = mino_scale; row_grid_start <= height * mino_scale; row_grid_start += mino_scale) {
-        grid_graphic.moveTo(0, row_grid_start);
-        grid_graphic.lineTo(width * mino_scale, row_grid_start);
+};
+
+function drawGrid(field, minoScale, height, width) {
+    const gridGraphic = new PIXI.Graphics();
+    gridGraphic.lineStyle(2, GRID_COLOR, GRID_ALPHA);
+
+    for (let i = 1; i < width; i++) {
+        gridGraphic.moveTo(i * minoScale, 0);
+        gridGraphic.lineTo(i * minoScale, height * minoScale);
     }
-    grid_graphic.lineStyle();
-    grid_graphic.lineStyle(2, 0xffffff);
+    for (let i = 1; i < height; i++) {
+        gridGraphic.moveTo(0, i * minoScale);
+        gridGraphic.lineTo(width * minoScale, i * minoScale);
+    }
+
+    gridGraphic.lineStyle(2, BORDER_COLOR);
     if (height > 20) {
-        grid_graphic.moveTo(0, (height - 20) * mino_scale);
-        grid_graphic.lineTo(width * mino_scale, (height - 20) * mino_scale);
+        gridGraphic.moveTo(0, (height - 20) * minoScale);
+        gridGraphic.lineTo(width * minoScale, (height - 20) * minoScale);
     }
-    if (width == 10) {
-        grid_graphic.moveTo(0, (height - 1) * mino_scale);
-        grid_graphic.lineTo(width * mino_scale, (height - 1) * mino_scale);
-        grid_graphic.lineStyle();
+    if (width === 10) {
+        gridGraphic.moveTo(0, (height - 1) * minoScale);
+        gridGraphic.lineTo(width * minoScale, (height - 1) * minoScale);
     }
-    field.stage.addChild(grid_graphic);
+
+    field.stage.addChild(gridGraphic);
 }
 
-//field上の操作
 let blocks = [];
-let Dragging = false;
+let isDragging = false;
 let dragColor;
+
 function onBlockClick(event) {
     const block = event.currentTarget;
     block.tint = block.tint === 0x000000 ? 0x999999 : 0x000000;
-    Dragging = true;
+    isDragging = true;
     dragColor = block.tint;
 }
 
 function onBlockOver(event) {
-    if (Dragging) {
-        const block = event.currentTarget;
-        block.tint = dragColor;
+    if (isDragging) {
+        event.currentTarget.tint = dragColor;
     }
 }
 
 function onDragEnd() {
-    Dragging = false;
+    isDragging = false;
 }
 
-//ブロック配置
-function drawBlock(field, mino_scale, height, width) {
+function drawBlock(field, minoScale, height, width) {
     for (let y = 0; y < height; y++) {
         for (let x = 0; x < width; x++) {
-            const block_graphics = new PIXI.Graphics();
-            block_graphics.beginFill(0xffffff);
-            block_graphics.drawRect(0, 0, mino_scale, mino_scale);
-            block_graphics.endFill();
-            block_graphics.tint = 0x000000;
-            block_graphics.x = x * mino_scale;
-            block_graphics.y = y * mino_scale
-            block_graphics.interactive = true;
-            block_graphics.buttonMode = true;
+            const blockGraphics = new PIXI.Graphics();
+            blockGraphics.beginFill(0xffffff);
+            blockGraphics.drawRect(0, 0, minoScale, minoScale);
+            blockGraphics.endFill();
+            blockGraphics.tint = 0x000000;
+            blockGraphics.position.set(x * minoScale, y * minoScale);
+            blockGraphics.interactive = true;
+            blockGraphics.buttonMode = true;
 
-            block_graphics.on('pointerdown', onBlockClick);
-            block_graphics.on('pointerover', onBlockOver);
-            block_graphics.on('pointerup', onDragEnd);
-            block_graphics.on('pointerupoutside', onDragEnd);
+            blockGraphics
+                .on('pointerdown', onBlockClick)
+                .on('pointerover', onBlockOver)
+                .on('pointerup', onDragEnd)
+                .on('pointerupoutside', onDragEnd);
 
-            field.stage.addChild(block_graphics)
-            blocks.push(block_graphics);
+            field.stage.addChild(blockGraphics);
+            blocks.push(blockGraphics);
         }
     }
 }
-//盤面をNull化
+
 function drawNull(field) {
-    blocks = []
+    blocks = [];
     field.stage.removeChildren();
-    field.renderer.resize(220, 175)
-    const null_text = new PIXI.Text();
-    null_text.text = 'FIELD DATA\n IS NULL';
-    null_text.style.fontFamily = 'consolas';
-    null_text.style.fontSize = 20;
-    null_text.style.fill = 0x000000;
-    null_text.style.align = 'center';
-    null_text.anchor.x = 0.5;
-    null_text.anchor.y = 0.5;
-    null_text.position.set(110, 87.5);
-    field.stage.addChild(null_text);
+    field.renderer.resize(220, 175);
+    const nullText = new PIXI.Text('FIELD DATA\n IS NULL', {
+        fontFamily: 'consolas',
+        fontSize: 20,
+        fill: 0x000000,
+        align: 'center'
+    });
+    nullText.anchor.set(0.5);
+    nullText.position.set(110, 87.5);
+    field.stage.addChild(nullText);
 }
 
-//盤面生成
-function generatefield(field, mino_scale) {
-    const fieldWidthInput = document.getElementById("FieldWidth")
-    const fieldHeightInput = document.getElementById("FieldHeight")
-    const FieldToggleSwitch = document.getElementById("FieldToggleSwitch")
-    const exactOnly = document.getElementById("exactOnly")
-    const exactOnlyText = document.getElementById("exactOnlyText")
+function generateField(field, minoScale) {
+    const fieldWidthInput = document.getElementById("FieldWidth");
+    const fieldHeightInput = document.getElementById("FieldHeight");
+    const fieldToggleSwitch = document.getElementById("FieldToggleSwitch");
+    const exactOnly = document.getElementById("exactOnly");
+    const exactOnlyText = document.getElementById("exactOnlyText");
 
     const width = parseInt(fieldWidthInput.value, 10);
     const height = parseInt(fieldHeightInput.value, 10);
 
     field.stage.removeChildren();
 
-    if (width == 10 || isNaN(width)) {
-        FieldToggleSwitch.style.display = "block"
-        exactOnly.style.display = "none"
-        exactOnlyText.style.display = "none"
-    }
-    else {
-        FieldToggleSwitch.style.display = "none"
-        FieldToggleSwitch.classList.add('active')
-        exactOnly.style.display = "block"
-        exactOnlyText.style.display = "block"
+    if (width === 10 || isNaN(width)) {
+        fieldToggleSwitch.style.display = "block";
+        exactOnly.style.display = "none";
+        exactOnlyText.style.display = "none";
+    } else {
+        fieldToggleSwitch.style.display = "none";
+        fieldToggleSwitch.classList.add('active');
+        exactOnly.style.display = "block";
+        exactOnlyText.style.display = "block";
     }
 
     if (!isNaN(width) && !isNaN(height) && width >= 2 && width <= 10 && height >= 2 && height <= 24) {
-        field.renderer.resize(width * mino_scale, height * mino_scale);
-        drawBlock(field, mino_scale, height, width);
-        drawGrid(field, mino_scale, height, width);
-    }
-    else {
+        field.renderer.resize(width * minoScale, height * minoScale);
+        drawBlock(field, minoScale, height, width);
+        drawGrid(field, minoScale, height, width);
+    } else {
         drawNull(field);
     }
 }
 
-//FieldReset
-function fieldreset(field) {
-    const fieldWidthInput = document.getElementById("FieldWidth")
-    const fieldHeightInput = document.getElementById("FieldHeight")
-    blocks = []
+function fieldReset(field) {
+    const fieldWidthInput = document.getElementById("FieldWidth");
+    const fieldHeightInput = document.getElementById("FieldHeight");
+    blocks = [];
     field.stage.removeChildren();
-    fieldHeightInput.value = ""
-    fieldWidthInput.value = ""
+    fieldHeightInput.value = "";
+    fieldWidthInput.value = "";
     drawNull(field);
-    FieldToggleSwitch.style.display = "block"
-    exactOnly.style.display = "none"
-    exactOnlyText.style.display = "none"
+    FieldToggleSwitch.style.display = "block";
+    exactOnly.style.display = "none";
+    exactOnlyText.style.display = "none";
 }
 
-//FieldErase
-function fielderase(field, mino_scale) {
-    blocks = []
+function fieldErase(field, minoScale) {
+    blocks = [];
     field.stage.removeChildren();
-    generatefield(field, mino_scale);
+    generateField(field, minoScale);
 }
 
-
-//users呼び出し
 let firstCall = true;
-async function callusers() {
-    const popWindow = document.getElementById("popWindow")
+async function callUsers() {
+    const popWindow = document.getElementById("popWindow");
     const popContent = popWindow.children[0];
-    const loadingWindow = document.getElementById("loadingWindow")
+    const loadingWindow = document.getElementById("loadingWindow");
     popWindow.style.display = "block";
     loadingWindow.style.display = "block";
-    if (firstCall == true) {
+    if (firstCall) {
         try {
-            const response = await fetch("https://tfdb.onrender.com/api/users", { mode: 'cors', credentials: 'include', method: "GET", headers: { 'Content-Type': "application/json" } });
-            const status = response['status']
+            const response = await fetch("http://127.0.0.1:5500/api/users", { mode: 'cors', credentials: 'include', method: "GET", headers: { 'Content-Type': "application/json" } });
+            const status = response.status;
             const data = await response.json();
-            if (status == 200) {
-                const table = document.getElementById("userTableBody")
-                data["data"].forEach((user) => {
+            if (status === 200) {
+                const table = document.getElementById("userTableBody");
+                data.data.forEach((user) => {
                     const row = document.createElement("tr");
-
-                    const radioCell = document.createElement("td");
-                    const radio = document.createElement("input");
-                    radio.type = "radio";
-                    radio.name = "user";
-                    radio.value = user[0];
-                    radioCell.appendChild(radio);
-                    row.appendChild(radioCell);
-                    const idCell = document.createElement("td");
-                    idCell.textContent = String(user[0])
-                    row.appendChild(idCell);
-                    const nameCell = document.createElement("td");
-                    nameCell.textContent = user[1]
-                    row.appendChild(nameCell);
+                    row.innerHTML = `
+                        <td><input type="radio" name="user" value="${user[0]}"></td>
+                        <td>${user[0]}</td>
+                        <td>${user[1]}</td>
+                    `;
                     table.appendChild(row);
                 });
+            } else {
+                console.log(`${status}: ${data.message}\n開発者に以下の情報を添付して連絡してください\n・このコンソール画面\n・入力したパラメータ全て\n・直前に行った行動`);
             }
-            else {
-                console.log(String(status) + "：" + data["message"] + "\n開発者に以下の情報を添付して連絡してください\n・このコンソール画面\n・入力したパラメータ全て\n・直前に行った行動")
-            }
-        }
-        catch (error) {
+        } catch (error) {
             console.log(error);
         }
         firstCall = false;
     }
     loadingWindow.style.display = "none";
     popContent.style.display = "block";
-
 }
-//選択user入力
-function userinput() {
-    const popWindow = document.getElementById("popWindow")
+
+function userInput() {
+    const popWindow = document.getElementById("popWindow");
     const popContent = popWindow.children[0];
     const selectedRadio = document.querySelector('input[name="user"]:checked');
-    const DiscordIdInput = document.getElementById('DiscordId');
+    const discordIdInput = document.getElementById('DiscordId');
     if (selectedRadio) {
-        DiscordIdInput.value = selectedRadio.value;
+        discordIdInput.value = selectedRadio.value;
     }
     popContent.style.display = "none";
     popWindow.style.display = "none";
 }
 
-//各パラメータ取得
-function getparams() {
-    const fumenID = isNaN(parseInt(document.getElementById("FumenId").value)) ? 0 : parseInt(document.getElementById("FumenId").value);
-    const title = /^\s*$/.test(document.getElementById("Title").value) ? 0 : document.getElementById("Title").value;
-    let titleOption = document.getElementById('TitleToggleSwitch').classList.contains("active") ? 1 : 0;
+function getParams() {
+    const params = {
+        fumenID: parseInt(document.getElementById("FumenId").value) || 0,
+        title: document.getElementById("Title").value.trim() || 0,
+        titleOption: document.getElementById('TitleToggleSwitch').classList.contains("active") ? 1 : 0,
+        discordId: parseInt(document.getElementById("DiscordId").value) || 0,
+        registerDateFrom: document.getElementById("RegisterTimeFrom").value || 0,
+        registerDateTo: document.getElementById("RegisterTimeTo").value || 0,
+        pageFrom: parseInt(document.getElementById("PageFrom").value) || 0,
+        pageTo: parseInt(document.getElementById("PageTo").value) || 0,
+        fumenType: parseInt(document.getElementById("FumenType").value),
+        timeType: parseInt(document.getElementById("TimeType").value),
+        fumen01Width: parseInt(document.getElementById("FieldWidth").value) || 0,
+        fumen01Mirror: document.getElementById('MirrorToggleSwitch').classList.contains("active") ? 1 : 0,
+        fumen01Option: document.getElementById('FieldToggleSwitch').classList.contains("active") ? 1 : 0,
+        fumen01: ""
+    };
 
-    const discordId = isNaN(parseInt(document.getElementById("DiscordId").value)) ? 0 : parseInt(document.getElementById("DiscordId").value);
-    const registerDateFrom = document.getElementById("RegisterTimeFrom").value ? document.getElementById("RegisterTimeFrom").value.toString() : 0;
-    const registerDateTo = document.getElementById("RegisterTimeTo").value ? document.getElementById("RegisterTimeTo").value.toString() : 0;
-    const pageFrom = isNaN(parseInt(document.getElementById("PageFrom").value)) ? 0 : parseInt(document.getElementById("PageFrom").value);
-    const pageTo = isNaN(parseInt(document.getElementById("PageTo").value)) ? 0 : parseInt(document.getElementById("PageTo").value);
-
-    const fumenType = parseInt(document.getElementById("FumenType").value)
-    const timeType = parseInt(document.getElementById("TimeType").value)
-
-    let fumen01Width = isNaN(parseInt(document.getElementById("FieldWidth").value)) ? 0 : parseInt(document.getElementById("FieldWidth").value);
-    let fumen01Mirror = document.getElementById('MirrorToggleSwitch').classList.contains("active") ? 1 : 0;
-    let fumen01Option = document.getElementById('FieldToggleSwitch').classList.contains("active") ? 1 : 0;
-    let fumen01 = ""
     let all0Flag = true;
     blocks.forEach(function (block) {
-        if (block.tint == 0) {
-            fumen01 += 0;
-        }
-        else {
-            fumen01 += 1
-            all0Flag = false
+        if (block.tint === 0) {
+            params.fumen01 += "0";
+        } else {
+            params.fumen01 += "1";
+            all0Flag = false;
         }
     });
+
     if (all0Flag) {
-        fumen01 = 0
+        params.fumen01 = 0;
+        params.fumen01Width = 0;
+        params.fumen01Mirror = 0;
+        params.fumen01Option = 0;
     }
 
-    if (title == 0) {
-        titleOption = 0
-    }
-    if (fumen01 == 0) {
-        fumen01 = 0
-        fumen01Width = 0
-        fumen01Mirror = 0
-        fumen01Option = 0
-    }
-    let errorText = ""
-    const fromDate = new Date(registerDateFrom);
-    const toDate = new Date(registerDateTo)
-    if (fromDate > toDate || pageFrom > pageTo) {
-        errorText += '"Register date" or "Page" is invalid parameter(s)\n'
-    }
-    if (errorText == 0) {
-        return [fumenID, title, titleOption, discordId, registerDateFrom, registerDateTo, pageFrom, pageTo, fumenType, timeType, fumen01, fumen01Option, fumen01Mirror, fumen01Width]
-    }
-    else {
-        return [-1, errorText]
+    if (params.title === 0) {
+        params.titleOption = 0;
     }
 
+    let errorText = "";
+    const fromDate = new Date(params.registerDateFrom);
+    const toDate = new Date(params.registerDateTo);
+    if (fromDate > toDate || params.pageFrom > params.pageTo) {
+        errorText += '"Register date" or "Page" is invalid parameter(s)\n';
+    }
+
+    return errorText ? [-1, errorText] : Object.values(params);
 }
-//検索処理
+
 async function search() {
-    let response
-    const bodyLabel = ["FumenID", 'Title', 'TitleOption', 'DiscordId', 'RegisterTimeFrom', 'RegisterTimeTo', 'PageFrom', 'PageTo', 'FumenTypeId', 'TimeTypeId', 'Fumen01', 'Fumen01Option', 'Fumen01Mirror', 'Fumen01Width']
-    const params = getparams();
+    const bodyLabel = ["FumenID", 'Title', 'TitleOption', 'DiscordId', 'RegisterTimeFrom', 'RegisterTimeTo', 'PageFrom', 'PageTo', 'FumenTypeId', 'TimeTypeId', 'Fumen01', 'Fumen01Option', 'Fumen01Mirror', 'Fumen01Width'];
+    const params = getParams();
 
-    const popWindow = document.getElementById("popWindow")
-    const loadingWindow = document.getElementById("loadingWindow")
+    const popWindow = document.getElementById("popWindow");
+    const loadingWindow = document.getElementById("loadingWindow");
 
-    if (params[0] == -1) {
-        alert(params[1])
-        return
+    if (params[0] === -1) {
+        alert(params[1]);
+        return;
     }
 
     popWindow.style.display = "block";
     loadingWindow.style.display = "block";
     try {
-        if (params[0] == 0) {
-            let bodyParam = {}
+        let response;
+        if (params[0] === 0) {
+            const bodyParam = {};
             for (let paramIndex = 1; paramIndex < params.length; paramIndex++) {
-                bodyParam[bodyLabel[paramIndex]] = params[paramIndex]
+                bodyParam[bodyLabel[paramIndex]] = params[paramIndex];
             }
-            response = await fetch("https://tfdb.onrender.com/api/search", { method: "POST", headers: { 'Content-Type': "application/json" }, body: JSON.stringify(bodyParam) });
+            response = await fetch("http://127.0.0.1:5500/api/search", { method: "POST", headers: { 'Content-Type': "application/json" }, body: JSON.stringify(bodyParam) });
+        } else {
+            response = await fetch("http://127.0.0.1:5500/api/searchid", { method: "POST", headers: { 'Content-Type': "application/json" }, body: JSON.stringify({ "FumenId": params[0] }) });
         }
-        else {
-            response = await fetch("https://tfdb.onrender.com/api/searchid", { method: "POST", headers: { 'Content-Type': "application/json" }, body: JSON.stringify({ "FumenId": params[0] }) });
-        }
-        const status = response['status']
+        const status = response.status;
         const data = await response.json();
-        if (status == 200) {
-            results = data["data"]
-            const resultCount = document.getElementById("resultCount")
-            const table = document.getElementById("resultBody")
-            resultCount.innerHTML = '';
+        if (status === 200) {
+            results = data.data;
+            const resultCount = document.getElementById("resultCount");
+            const table = document.getElementById("resultBody");
+            resultCount.textContent = `Result count: ${data.data.length}`;
             table.innerHTML = '';
 
-            resultCount.appendChild(document.createTextNode("Result count:" + String(data["data"].length)))
-
-            data["data"].forEach((fumen_row, index) => {
+            data.data.forEach((fumen_row, index) => {
                 const row = document.createElement("tr");
-                const titleCell = document.createElement("td");
-                titleCell.textContent = String(fumen_row[1])
-                row.appendChild(titleCell);
-                const fumenCell = document.createElement("td");
-                const fumenLink = document.createElement("a")
-                fumenLink.href = "https://knewjade.github.io/fumen-for-mobile/#?d=" + String(fumen_row[2])
-                fumenLink.target = "_blank"
-                fumenLink.appendChild(document.createTextNode("Link"))
-                fumenCell.appendChild(fumenLink)
-                row.appendChild(fumenCell);
-                const typeCell = document.createElement("td");
-                typeCell.textContent = String(fumen_row[4])
-                row.appendChild(typeCell);
-                const timingCell = document.createElement("td");
-                timingCell.textContent = String(fumen_row[5])
-                row.appendChild(timingCell);
-                const detailCell = document.createElement("td")
-                const detailButton = document.createElement("button")
-                const detailIcon = document.createElement("i")
-                detailIcon.classList.add("fas")
-                detailIcon.classList.add("fa-file-alt")
-                detailButton.appendChild(detailIcon)
-                detailButton.classList.add("action-button")
-                detailButton.classList.add("result-button")
-                detailButton.id = index
-                detailCell.appendChild(detailButton)
-                row.appendChild(detailCell);
+                row.innerHTML = `
+                    <td>${fumen_row[1]}</td>
+                    <td><a href="https://knewjade.github.io/fumen-for-mobile/#?d=${fumen_row[2]}" target="_blank">Link</a></td>
+                    <td>${fumen_row[4]}</td>
+                    <td>${fumen_row[5]}</td>
+                    <td><button class="action-button result-button" id="${index}"><i class="fas fa-file-alt"></i></button></td>
+                `;
                 table.appendChild(row);
-            })
+            });
+        } else {
+            console.log(`${status}: ${data.message}\n開発者に以下の情報を添付して連絡してください\n・このコンソール画面\n・入力したパラメータ全て\n・直前に行った行動`);
         }
-        else {
-            console.log(String(status) + "：" + data["message"] + "\n開発者に以下の情報を添付して連絡してください\n・このコンソール画面\n・入力したパラメータ全て\n・直前に行った行動")
-        }
-    }
-    catch (error) {
+    } catch (error) {
         console.log(error);
     }
     popWindow.style.display = "none";
     loadingWindow.style.display = "none";
 
-    detailButton = document.querySelectorAll('.result-button')
+    detailButton = document.querySelectorAll('.result-button');
     detailButton.forEach(button => {
-        button.addEventListener('click', function () { calldetail(button.id) });
+        button.addEventListener('click', () => callDetail(button.id));
     });
 }
 
-//detail関係
-const piecepattern = {
-    "T": {
-        "spawn": [-1, 0, 10, 1],
-        "left": [-1, 0, 10, -10],
-        "right": [0, 10, -10, 1],
-        "reverse": [0, -1, -10, 1]
-    },
-    "I": {
-        "spawn": [-1, 0, 1, 2],
-        "left": [-10, 0, 10, 20],
-        "right": [10, 0, -10, -20],
-        "reverse": [-2, -1, 0, 1]
-    },
-    "O": {
-        "spawn": [0, 10, 1, 11],
-        "left": [-1, 0, 9, 10],
-        "right": [0, -10, -1, -11],
-        "reverse": [-11, -1, -10, 0]
-    },
-    "S": {
-        "spawn": [-1, 0, 10, 11],
-        "left": [-1, 9, 0, -10],
-        "right": [0, 10, 1, -9],
-        "reverse": [-11, -10, 0, 1]
-    },
-    "Z": {
-        "spawn": [0, 1, 10, 9],
-        "left": [0, 10, -1, -11],
-        "right": [0, -10, 1, 11],
-        "reverse": [-1, 0, -10, -9]
-    },
-    "L": {
-        "spawn": [0, -1, 1, 11],
-        "left": [0, 9, 10, -10],
-        "right": [10, 0, -10, -9],
-        "reverse": [-1, -11, 0, 1]
-    },
-    "J": {
-        "spawn": [0, 1, -1, 9],
-        "left": [0, -11, 10, -10],
-        "right": [10, 0, -10, 11],
-        "reverse": [1, -9, 0, -1]
-    }
-}
-
 function drawFumen(field, page) {
-    function selectcolor(colorNum) {
-        switch (colorNum) {
-            case 1:
-                return 0x00fafa
-            case 2:
-                return 0xe89b02
-            case 3:
-                return 0xf7f70a
-            case 4:
-                return 0xf00202
-            case 5:
-                return 0xf002f0
-            case 6:
-                return 0x0000ff
-            case 7:
-                return 0x02d902
-            case 8:
-                return 0x999999
-            default:
-                return 0x000000
-        }
+    function selectColor(colorNum) {
+        return PIECE_COLORS[colorNum] || 0x000000;
     }
-    //piece使用箇所の塗りつぶし
-    if (page["operation"] != undefined) {
-        let typeNum;
-        let center;
-        let gap;
-        switch (page["operation"]["type"]) {
-            case "T":
-                typeNum = 5
-                break
-            case "I":
-                typeNum = 1
-                break
-            case "O":
-                typeNum = 3
-                break
-            case "S":
-                typeNum = 7
-                break
-            case "Z":
-                typeNum = 4
-                break
-            case "L":
-                typeNum = 2
-                break
-            case "J":
-                typeNum = 6
-        }
-        center = page["operation"]["x"] + page["operation"]["y"] * 10
-        for (let piece = 0; piece < 4; piece++) {
-            gap = piecepattern[page["operation"]["type"]][page["operation"]["rotation"]][piece]
-            page["_field"]["field"]["pieces"][center + gap] = typeNum
-        }
+
+    if (page.operation) {
+        const typeNum = "ILOZTJS".indexOf(page.operation.type) + 1;
+        const center = page.operation.x + page.operation.y * 10;
+        PIECE_PATTERNS[page.operation.type][page.operation.rotation].forEach(gap => {
+            page._field.field.pieces[center + gap] = typeNum;
+        });
     }
-    //フィールドに配置
+
     for (let y = 22; y >= 0; y--) {
         for (let x = 0; x < 10; x++) {
-            const block_graphics = new PIXI.Graphics();
-            block_graphics.beginFill(selectcolor(page["_field"]["field"]["pieces"][x + 10 * (22 - y)]));
-            block_graphics.drawRect(0, 0, 17, 17);
-            block_graphics.endFill();
-            block_graphics.x = x * 17;
-            block_graphics.y = y * 17
-            field.stage.addChild(block_graphics)
+            const blockGraphics = new PIXI.Graphics();
+            blockGraphics.beginFill(selectColor(page._field.field.pieces[x + 10 * (22 - y)]));
+            blockGraphics.drawRect(0, 0, 17, 17);
+            blockGraphics.endFill();
+            blockGraphics.position.set(x * 17, y * 17);
+            field.stage.addChild(blockGraphics);
         }
     }
-    for (let x = 0; x < 10; x++) {
-        const block_graphics = new PIXI.Graphics();
-        block_graphics.beginFill(selectcolor(page["_field"]["garbage"]["pieces"][x]));
-        block_graphics.drawRect(0, 0, 17, 17);
-        block_graphics.endFill();
-        block_graphics.x = x * 17;
-        block_graphics.y = 391
-        field.stage.addChild(block_graphics)
-    }
-    drawGrid(field, 17, 24, 10);
-    //comment挿入
-    const fumenComment = document.getElementById("fumenComment")
-    fumenComment.textContent = page["comment"] == 0 ? " " : page["comment"]
 
+    for (let x = 0; x < 10; x++) {
+        const blockGraphics = new PIXI.Graphics();
+        blockGraphics.beginFill(selectColor(page._field.garbage.pieces[x]));
+        blockGraphics.drawRect(0, 0, 17, 17);
+        blockGraphics.endFill();
+        blockGraphics.position.set(x * 17, 391);
+        field.stage.addChild(blockGraphics);
+    }
+
+    drawGrid(field, 17, 24, 10);
+
+    const fumenComment = document.getElementById("fumenComment");
+    fumenComment.textContent = page.comment || " ";
 }
 
-function calldetail(index) {
-    const popWindow = document.getElementById("popWindow")
-    const detailWindow = document.getElementById("detailWindow")
-    const detailIdTitle = document.getElementById("detailIdTitle")
-    const detailAuthor = document.getElementById("detailAuthor")
-    const detailRegisterDate = document.getElementById("detailRegisterDate")
-    const detailFumenType = document.getElementById("detailFumenType")
-    const detailTiming = document.getElementById("detailTiming")
-    const detailComment = document.getElementById("detailComment")
-    const detailField = document.getElementById("detailField")
+let currentPage = 0;
+const moveToPageFunction = {};
+function callDetail(index) {
+    const popWindow = document.getElementById("popWindow");
+    const detailWindow = document.getElementById("detailWindow");
+    const elements = {
+        detailIdTitle: document.getElementById("detailIdTitle"),
+        detailAuthor: document.getElementById("detailAuthor"),
+        detailRegisterDate: document.getElementById("detailRegisterDate"),
+        detailFumenType: document.getElementById("detailFumenType"),
+        detailTiming: document.getElementById("detailTiming"),
+        detailComment: document.getElementById("detailComment"),
+        detailField: document.getElementById("detailField"),
+        detailClose: document.getElementById("detailClose")
+    };
+
     popWindow.style.display = "block";
 
-    detailIdTitle.textContent = results[index][0] + "：" + results[index][1]
-    detailAuthor.textContent = "：" + results[index][6]
-    detailRegisterDate.textContent = "：" + results[index][7].slice(0, 9)
-    detailFumenType.textContent = "：" + results[index][4]
-    detailTiming.textContent = "：" + results[index][5]
-    detailComment.textContent = results[index][3] == 0 ? "-" : results[index][3]
+    const result = results[index];
+    elements.detailIdTitle.textContent = `${result[0]}：${result[1]}`;
+    elements.detailAuthor.textContent = `：${result[6]}`;
+    elements.detailRegisterDate.textContent = `：${result[7].slice(0, 9)}`;
+    elements.detailFumenType.textContent = `：${result[4]}`;
+    elements.detailTiming.textContent = `：${result[5]}`;
+    elements.detailComment.textContent = result[3] || "-";
 
-    if (detailField.firstChild) {
-        detailField.removeChild(detailField.firstChild)
-    }
     const fumenField = new PIXI.Application({
         width: 10 * 17,
         height: 24 * 17,
@@ -515,82 +432,82 @@ function calldetail(index) {
         resolution: 1,
         autoDensity: true
     });
-    detailField.appendChild(fumenField.view);
+    elements.detailField.appendChild(fumenField.view);
 
-    let currenPage = 0
+    currentPage = 0;
 
-    //fumen描画
-    const decoded = fumen.decoder.decode(results[index][2]);
-    drawFumen(fumenField, decoded[currenPage])
+    const decoded = fumen.decoder.decode(result[2]);
+    drawFumen(fumenField, decoded[currentPage]);
 
-    //fumenPageMax
-    const fumenPageMax = document.getElementById("fumenPageMax")
-    fumenPageMax.textContent = decoded.length
-
-    //fumen page関係イベント
-    const fumenPageInput = document.getElementById("fumenPageInput")
-    const previousPage = document.getElementById("previousPage")
-    const nextPage = document.getElementById("nextPage")
-
-    fumenPageInput.value = currenPage + 1
-
-    previousPage.addEventListener("click", function () {
-        if (currenPage > 0) {
-            currenPage--
-            drawFumen(fumenField, decoded[currenPage])
-            fumenPageInput.value = currenPage + 1
+    function moveToInputPage() {
+        if (fumenPageInput.value && fumenPageInput.value <= decoded.length && fumenPageInput.value > 0) {
+            currentPage = fumenPageInput.value - 1;
+            drawFumen(fumenField, decoded[currentPage]);
         }
-    })
-
-    nextPage.addEventListener("click", function () {
-        if (currenPage < decoded.length - 1) {
-            currenPage++
-            drawFumen(fumenField, decoded[currenPage])
-            fumenPageInput.value = currenPage + 1
+    }
+    function moveToPreviousPage() {
+        if (currentPage > 0) {
+            currentPage--;
+            drawFumen(fumenField, decoded[currentPage]);
+            fumenPageInput.value = currentPage + 1;
         }
-    });
+    }
+    function moveToNextPage() {
+        if (currentPage < decoded.length - 1) {
+            currentPage++;
+            drawFumen(fumenField, decoded[currentPage]);
+            fumenPageInput.value = currentPage + 1;
+        }
+    }
 
-    fumenPageInput.addEventListener("input", function () {
-        currenPage = fumenPageInput.value - 1
-        drawFumen(fumenField, decoded[currenPage])
-    });
 
-    detailWindow.style.display = "block"
+    moveToPageFunction.moveToInputPage = moveToInputPage;
+    moveToPageFunction.moveToPreviousPage = moveToPreviousPage;
+    moveToPageFunction.moveToNextPage = moveToNextPage;
 
+    const fumenPageMax = document.getElementById("fumenPageMax");
+    fumenPageMax.textContent = decoded.length;
+
+    const fumenPageInput = document.getElementById("fumenPageInput");
+    const previousPage = document.getElementById("previousPage");
+    const nextPage = document.getElementById("nextPage");
+
+    fumenPageInput.value = currentPage + 1;
+
+    fumenPageInput.addEventListener("input", moveToInputPage);
+    previousPage.addEventListener("click", moveToPreviousPage);
+    nextPage.addEventListener("click", moveToNextPage);
+
+    detailWindow.style.display = "block";
 }
 
-//mainのwidthによってstyle変更
-function changestyle() {
-    const main = document.getElementById("main")
-    const result = document.getElementById("result")
+function changeStyle() {
+    const main = document.getElementById("main");
+    const result = document.getElementById("result");
     if (main.offsetWidth >= 1200) {
-        main.style.flexDirection = "row"
-        result.style.flexGrow = "0"
-        result.style.marginLeft = "0"
-        result.style.marginTop = "20px"
-    }
-    else {
-        main.style.flexDirection = "column"
-        result.style.flexGrow = "1"
-        result.style.marginLeft = "80px"
-        result.style.marginTop = "70px"
+        main.style.flexDirection = "row";
+        result.style.flexGrow = "0";
+        result.style.marginLeft = "0";
+        result.style.marginTop = "20px";
+    } else {
+        main.style.flexDirection = "column";
+        result.style.flexGrow = "1";
+        result.style.marginLeft = "80px";
+        result.style.marginTop = "70px";
     }
 }
 
-//読み込み後呼び出し
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', () => {
     fetch('./sidebar/sidebar.html')
         .then(response => response.text())
         .then(data => {
             document.getElementById('sidebar_contena').innerHTML = data;
             sidebarjs();
-        })
+        });
 
-    //Field Stage生成
-    const mino_scale = 22
     const field = new PIXI.Application({
-        width: 10 * mino_scale,
-        height: 24 * mino_scale,
+        width: 10 * MINO_SCALE,
+        height: 24 * MINO_SCALE,
         backgroundColor: 0xffffff,
         resolution: 1,
         autoDensity: true
@@ -601,112 +518,79 @@ document.addEventListener('DOMContentLoaded', function () {
     field.stage.on('pointerup', onDragEnd);
     field.stage.on('pointerupoutside', onDragEnd);
 
+    const elements = {
+        callUsersButton: document.getElementById("userTableButton"),
+        userSelect: document.getElementById("userSelect"),
+        popWindow: document.getElementById("popWindow"),
+        popContent: document.getElementById("popWindow").children[0],
+        popClose: document.getElementById("popClose"),
+        detailWindow: document.getElementById("detailWindow"),
+        detailClose: document.getElementById("detailWindow").querySelector(".detail-close"),
+        fieldWidthInput: document.getElementById("FieldWidth"),
+        fieldHeightInput: document.getElementById("FieldHeight"),
+        fieldReset: document.getElementById("FieldReset"),
+        fieldErase: document.getElementById("FieldErase"),
+        clearButton: document.getElementById("clear"),
+        searchButton: document.getElementById("search"),
+        titleToggleSwitch: document.getElementById("TitleToggleSwitch"),
+        mirrorToggleSwitch: document.getElementById("MirrorToggleSwitch"),
+        fieldToggleSwitch: document.getElementById("FieldToggleSwitch")
+    };
 
-    //user呼び出し関係
-    const callUsersButton = document.getElementById("userTableButton");
-    const userSelect = document.getElementById("userSelect")
-    callUsersButton.addEventListener("click", callusers);
-    userSelect.addEventListener("click", userinput);
-
-    const popWindow = document.getElementById("popWindow")
-    const popContent = popWindow.children[0];
-    const popClose = document.getElementById("popClose")
-    popClose.addEventListener("click", function () {
-        popContent.style.display = "none"
-        popWindow.style.display = "none";
-    })
-
-    //detailClose
-    const detailWindow = document.getElementById("detailWindow")
-    const detailClose = detailWindow.querySelector(".detail-close");
-    detailClose.addEventListener("click", function () {
-        detailWindow.style.display = "none"
-        popWindow.style.display = "none";
-    })
-
-    //盤面生成関係
-    const fieldWidthInput = document.getElementById("FieldWidth")
-    const fieldHeightInput = document.getElementById("FieldHeight")
-    fieldHeightInput.addEventListener('input', function () { generatefield(field, mino_scale) });
-    fieldWidthInput.addEventListener('input', function () { generatefield(field, mino_scale) });
-
-    //FieldReset
-    const fieldReset = document.getElementById("FieldReset")
-    fieldReset.addEventListener("click", function () { fieldreset(field) })
-
-    //FieldErase
-    const fieldErase = document.getElementById("FieldErase")
-    fieldErase.addEventListener("click", function () { fielderase(field, mino_scale) })
-
-    //Clearbutton
-    const clearButton = document.getElementById("clear")
-    clearButton.addEventListener("click", function () {
-        //input
-        document.querySelectorAll("input").forEach(input => {
-            input.value = "";
-        })
-        //select
-        document.querySelectorAll("select").forEach(select => {
-            select.selectedIndex = 0;
-        })
-        //toggle
-        document.querySelectorAll(".toggle-switch").forEach(toggle => {
-            toggle.classList.remove("active")
-        })
-        fieldreset(field);
-    })
-
-    //searchbutton
-    const searchButton = document.getElementById("search");
-    searchButton.addEventListener("click", search)
-
-    //各アコーディオン切り替え
-    document.querySelectorAll(".group-button").forEach(
-        button => {
-            button.addEventListener("click", function () {
-                const GroupContent = button.nextElementSibling;
-
-                this.classList.toggle("active");
-                GroupContent.style.display = this.classList.contains("active") ? "block" : "none";
-            })
-        }
-    );
-
-    //各Switch切り替え
-    const TitleToggleSwitch = document.getElementById("TitleToggleSwitch");
-    const MirrorToggleSwitch = document.getElementById("MirrorToggleSwitch");
-    const FieldToggleSwitch = document.getElementById("FieldToggleSwitch");
-
-    TitleToggleSwitch.addEventListener("click", function () {
-        TitleToggleSwitch.classList.toggle("active");
+    elements.callUsersButton.addEventListener("click", callUsers);
+    elements.userSelect.addEventListener("click", userInput);
+    elements.popClose.addEventListener("click", () => {
+        elements.popContent.style.display = "none";
+        elements.popWindow.style.display = "none";
     });
 
-    MirrorToggleSwitch.addEventListener("click", function () {
-        MirrorToggleSwitch.classList.toggle("active");
+    elements.detailClose.addEventListener("click", () => {
+        fumenPageInput.removeEventListener("input", moveToPageFunction.moveToInputPage);
+        previousPage.removeEventListener("click", moveToPageFunction.moveToPreviousPage);
+        nextPage.removeEventListener("click", moveToPageFunction.moveToNextPage);
+        document.getElementById("detailField").removeChild(document.getElementById("detailField").firstChild);
+        elements.detailWindow.style.display = "none";
+        elements.popWindow.style.display = "none";
+    });
+    elements.fieldHeightInput.addEventListener('input', () => generateField(field, MINO_SCALE));
+    elements.fieldWidthInput.addEventListener('input', () => generateField(field, MINO_SCALE));
+    elements.fieldReset.addEventListener("click", () => fieldReset(field));
+    elements.fieldErase.addEventListener("click", () => fieldErase(field, MINO_SCALE));
+    elements.clearButton.addEventListener("click", () => {
+        document.querySelectorAll("input").forEach(input => { input.value = ""; });
+        document.querySelectorAll("select").forEach(select => { select.selectedIndex = 0; });
+        document.querySelectorAll(".toggle-switch").forEach(toggle => { toggle.classList.remove("active"); });
+        fieldReset(field);
+    });
+    elements.searchButton.addEventListener("click", search);
+
+    document.querySelectorAll(".group-button").forEach(button => {
+        button.addEventListener("click", function () {
+            const groupContent = this.nextElementSibling;
+            this.classList.toggle("active");
+            groupContent.style.display = this.classList.contains("active") ? "block" : "none";
+        });
     });
 
-    FieldToggleSwitch.addEventListener("click", function () {
-        FieldToggleSwitch.classList.toggle("active");
-
+    [elements.titleToggleSwitch, elements.mirrorToggleSwitch, elements.fieldToggleSwitch].forEach(toggle => {
+        toggle.addEventListener("click", function () {
+            this.classList.toggle("active");
+        });
     });
 
-    //resize時にmainの並び変更
-    window.addEventListener('resize', changestyle);
-    changestyle();
-
+    window.addEventListener('resize', changeStyle);
+    changeStyle();
 });
 
-//loading画面
-const colors = ['#00fafa', '#f002f0', '#02d902', '#f00202', '#e89b02', '#0000ff', '#f7f70a'];
+const LOADING_COLORS = ['#00fafa', '#f002f0', '#02d902', '#f00202', '#e89b02', '#0000ff', '#f7f70a'];
 
 function changeBlockColors() {
     const blocks = document.querySelectorAll('.block');
-    const color = colors[Math.floor(Math.random() * colors.length)];
+    const color = LOADING_COLORS[Math.floor(Math.random() * LOADING_COLORS.length)];
     blocks.forEach(block => {
-        block.style.backgroundColor = color
+        block.style.backgroundColor = color;
     });
 }
+
 document.getElementById("loadingT").addEventListener("animationiteration", changeBlockColors);
 changeBlockColors();
-
-
