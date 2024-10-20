@@ -10,16 +10,17 @@ from datetime import datetime
 import py_fumen_py
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "https://tfdb.onrender.com/"}}, methods=["GET", "POST"]
+CORS(app, resources={r"/*": {"origins": "https://sakurw.github.io/TFDB/"}}, methods=["GET", "POST"]
      , allow_headers=["Content-Type", "Authorization"], supports_credentials=True, max_age=1800, send_wildcard=False,
      vary_header=True)
 api = Api(app)
 
-dbconfig = {"database": "TFDB", "user": os.getenv('DB_USER'), "password": os.getenv('DB_PASSWORD'), "host": os.getenv('DB_HOST')}
+dbconfig = {"database": "TFDB", "user": os.getenv('DB_USER'), "password": os.getenv('DB_PASSWORD'),
+            "host": os.getenv('DB_HOST')}
 salt = os.getenv('SALT')
 salted_hashed_key = os.getenv('HASHED_SALTED_KEY')
-hashed_count=int(os.getenv('HASHED_COUNT'))
-cryption=os.getenv('CRYPTION')
+hashed_count = int(os.getenv('HASHED_COUNT'))
+cryption = os.getenv('CRYPTION')
 pool = mysql.connector.pooling.MySQLConnectionPool(pool_name="TFDBConectPool", pool_size=2, **dbconfig)
 
 
@@ -35,24 +36,22 @@ def token_check(token):
 def exe_SQL(code, params, date_flag):
     db = pool.get_connection()
     cursor = db.cursor()
-    try:
-        cursor.execute(code, params)
-    except mysql.connector.IntegrityError:
-        return [False, '']
-    except mysql.connector.Error as Error:
-        return [False, '']
     results = []
+    try:
+        for result in cursor.execute(code, params, multi=True):
+            if result.with_rows:
+                results.append(result.fetchall())
+        db.commit()
+    except mysql.connector.IntegrityError:
+        db.rollback()
+        return [False, 'IntegrityError']
+    except mysql.connector.Error as Error:
+        db.rollback()
+        return [False, str(Error)]
+    finally:
+        cursor.close()
+        db.close()
 
-    while True:
-        try:
-            result = cursor.fetchall()
-            results.append(result)
-            if not cursor.nextset():
-                break
-        except mysql.connector.errors.InterfaceError:
-            continue
-
-    db.close()
     if date_flag is True:
         # タプルのままdatetime型のJSONシリアライズを回避できないため、一旦listに変換
         result_list = []
@@ -91,7 +90,8 @@ class Search(Resource):
     correct_params = {'FumenTypeId': 'int', 'TimeTypeId': 'int', 'DiscordId': 'int',
                       'PageFrom': 'int',
                       'PageTo': 'int', 'RegisterTimeFrom': 'str', 'RegisterTimeTo': 'str',
-                      'Title': 'str', 'TitleOption': 'int', 'Fumen01': 'str', 'Fumen01Option':'int','Fumen01Width': 'int',
+                      'Title': 'str', 'TitleOption': 'int', 'Fumen01': 'str', 'Fumen01Option': 'int',
+                      'Fumen01Width': 'int',
                       'Fumen01Mirror': 'int'}
 
     # Fumen01用文字種チェック関数
@@ -169,7 +169,6 @@ class Search(Resource):
         sql_code = "SELECT FumenId,Title,FumenCode,Comment,FumenType,TimeType,DiscordName,RegisterTime FROM ForWEB WHERE"
         use_param_values = []
         AND_Flag = False
-
         for param in params.keys():
             # Id系統
             if param in ['FumenTypeId', 'TimeTypeId', 'DiscordId'] and params[param] != 0:
@@ -288,7 +287,6 @@ class AddFumen(Resource):
         for param_key in params.keys():
             if not (type(params[param_key]).__name__ == self.correct_params[param_key]):
                 return [False, 'Invalid parameter (Caused by Invalid type)']
-
         # Titleやコメント、譜面コードにURLが含まれていないか
         if 'http//:' in params['Title'] or 'https://' in params['Title'] or 'http//:' in params[
             'Comment'] or 'https://' in params['Comment'] or 'http//:' in params['FumenCode'] or 'https://' in params[
@@ -362,18 +360,19 @@ class AddFumen(Resource):
         # FumenInforに追加
         # 追加したFumenId取得
         # 占有ロック解除
-        result = exe_SQL('LOCK TABLES FumenInfor WRITE;' +
-                         'INSERT INTO FumenInfor (FumenCode,Title,DiscordId,RegisterTime,Comment,TimeTypeId,FumenTypeId,Page) VALUES (%s,%s,%s,%s,%s,%s,%s,%s);' +
-                         'SELECT MAX(FumenId) FROM FumenInfor;' +
-                         'UNLOCK TABLES;',
-                         [params['FumenCode'], params['Title'], params['DiscordId'], datetime.now(), params['Comment'],
-                          params['TimeTypeId'], params['FumenTypeId'], page_count], False)
+        result = exe_SQL(
+            'LOCK TABLES FumenInfor WRITE; INSERT INTO FumenInfor (FumenCode,Title,DiscordId,RegisterTime,Comment,TimeTypeId,FumenTypeId,Page) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s); SELECT MAX(FumenId) FROM FumenInfor; UNLOCK TABLES;',
+            [params['FumenCode'], params['Title'], params['DiscordId'], datetime.now(), params['Comment'],
+             params['TimeTypeId'], params['FumenTypeId'], page_count], False)
         if result[0] is False:
-            return Response(response=json.dumps({'data': "", 'message': 'Invalid parameter (SQL Error)'}), status=400)
+            return Response(response=json.dumps({'data': "", 'message': result[1]}), status=400)
         # FumenPageに追加
         sql_code = 'INSERT INTO FumenPage(FumenId,FumenPage,FumenPageCode,FumenPage01) VALUES'
         add_pages_infor = []
-        FumenId = result[1][2][0][0]
+        try:
+            FumenId = result[1][0][0][0]
+        except:
+            return Response(response=json.dumps({'data': "", 'message': result}), status=400)
         page_index = 1
         for page in pages:
             if page_index != 1:
@@ -397,4 +396,4 @@ api.add_resource(Search, "/search")
 api.add_resource(SearchId, "/searchid")
 api.add_resource(AddFumen, "/addfumen")
 if __name__ == "__main__":
-    app.run(debug=False,host='0.0.0.0',port=443)
+    app.run(debug=False, host='0.0.0.0', port=443)
